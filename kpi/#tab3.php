@@ -1,1 +1,0 @@
-<h4>Nội dung Tab2</h4>
