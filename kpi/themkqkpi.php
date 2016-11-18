@@ -9,7 +9,7 @@ require"../lib/quanli.php";
   $row = mysql_fetch_assoc($result);
   $total_kpi = $row['total'];
   $total_trongso = $row['ts'];
-  $result_ts = mysql_query(" SELECT sum(if(lcv='A',kqkpi.trongso,0)) as ts_a, sum(if(lcv='B',kqkpi.trongso,0)) as ts_b, sum((kqkpi.kq/kqkpi.mt)*kqkpi.trongso) as tylets, sum(if(lcv='A',kqkpi.trongso*(kq/kqkpi.mt),0)) as tylets_a, sum(if(lcv='B',kqkpi.trongso*(kq/kqkpi.mt),0)) as tylets_b, sum(((kqkpi.kq/kqkpi.mt)*kqkpi.trongso)*(pt)) as total_pt, sum(((kqkpi.kq/kqkpi.mt)*kqkpi.trongso)*(tl)) as total_tl, sum(((kqkpi.kq/kqkpi.mt)*kqkpi.trongso)*(tgd)) as total_tgd from kqkpi inner join kpi on kqkpi.makpi = kpi.makpi where manv = '$manv'");
+  $result_ts = mysql_query(" SELECT sum(if(lcv='A',trongso,0)) as ts_a, sum(if(lcv='B',trongso,0)) as ts_b, sum((kq/mt)*trongso) as tylets, sum(if(lcv='A',trongso*(kq/mt),0)) as tylets_a, sum(if(lcv='B',trongso*(kq/mt),0)) as tylets_b, sum(((kq/mt)*trongso)*(pt)) as total_pt, sum(((kq/mt)*trongso)*(tl)) as total_tl, sum(((kq/mt)*trongso)*(tgd)) as total_tgd from kqkpi where manv = '$manv'");
   $row_ts = mysql_fetch_assoc($result_ts);
   $total_trongsoA = $row_ts['ts_a'];
   $total_trongsoB = $row_ts['ts_b'];
@@ -30,14 +30,18 @@ require"../lib/quanli.php";
       $kpi = $_POST["kpi"];  
       $trongso = $_POST["trongso"];  
       $mt = $_POST["mt"];
+      $bc = $_POST["bc"];
+      $dvt = $_POST["dvt"];
+      $lcv = $_POST["lcv"];
+      $giaithich = $_POST["giaithich"];
       date_default_timezone_set('Asia/Ho_Chi_Minh');
       $ngaytao = date("Y-m-d H:i:s");
       $thang = date("m");
       $nam = date("Y"); 
       $query = "  
-      INSERT INTO kqkpi
-      VALUES(null, '$manv', '$makpi', '$kpi', '$trongso', '$mt', 0, '', '', 0, '', 0, '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', '$ngaytao', 0, '$thang', '$nam');  
-      ";  
+      INSERT INTO kqkpi VALUES(null, '$manv', '$makpi', '$kpi', '$lcv', '$dvt', '$bc', '$trongso', '$mt', 0, '', '', 0, '', 0, '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '','$giaithich', '$ngaytao', 0, '$thang', '$nam');  
+      "; 
+      //echo $query; 
       if(mysql_query($query))  
       {  
            $output .= '<div class="alert alert-success">
@@ -56,12 +60,12 @@ require"../lib/quanli.php";
                   <th>BC</th>
                   <th>TS</th>
                   <th>MT</th>
-                  <th>KQ</th>
                   <th>HDCT</th>
+                  <th>KQ</th>
+                  <th>Kết quả HĐCT</th>
                   <th>PT</th>
                   <th>TL</th>
                   <th>TGĐ</th>
-                  <th>Kết quả HĐCT</th>
                   <th>Chức năng</th>
                 </tr>
                 </thead>
@@ -83,21 +87,21 @@ require"../lib/quanli.php";
                     <tr class="roweven" id="'.$row_xemkqkpi["id_kqkpi"].'">
                     <td>'.$stt.'</td>
                     <td>'.$row_xemkqkpi["makpi"].'</td>
-                    <td>'.$row_xemkqkpi["kpi"].'</td>
+                    <td><span  data-toggle="tooltip" title="'.$row_xemkqkpi["giaithich"].'">'.$row_xemkqkpi["kpi"].'</span></td>
                     <td>'.$row_xemkqkpi["lcv"].'</td>
                     <td>'.$row_xemkqkpi["dvt"].'</td>
                     <td>'.$row_xemkqkpi["bc"].'</td>
                     <td>'.$row_xemkqkpi["trongso"].'%</td>
                     <td>'.$row_xemkqkpi["mt"].'</td>
-                    <td>'.$row_xemkqkpi["kq"].'</td>
                     <td>'.$row_xemkqkpi["hdct"].'</td>
+                    <td>'.$row_xemkqkpi["kq"].'</td>
+                    <td>'.$row_xemkqkpi["ghichu"].'</td>
                     <td><input disabled="disabled" type="checkbox" '.$pt.' /></td>
                     <td><input disabled="disabled" type="checkbox" '.$tl.' /></td>
                     <td><input disabled="disabled" type="checkbox" '.$tgd.' /></td>
-                    <td>'.$row_xemkqkpi["ghichu"].'</td>
                     <td width="85px">
                  <div class="btn-group">
-                  <button type="button" data-toggle="modal" data-target="#dataModal" data-id="{id_kqkpi}" class="btn btn-primary btn-xs xemkqkpi">Xem</button>
+                  <button type="button" data-toggle="modal" data-target="#dataModal" data-id="'.$row_xemkqkpi["id_kqkpi"].'" class="btn btn-primary btn-xs xemkqkpi">Xem</button>
                   <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown">
                     <span class="caret"></span>
                   </button>

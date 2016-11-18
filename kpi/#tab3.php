@@ -1,1 +1,1 @@
-<h4>Nội dung Tab2</h4>
+<h2>Chức năng này đang được phát triển</h2>

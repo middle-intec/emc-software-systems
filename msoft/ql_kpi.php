@@ -8,8 +8,7 @@ require"../lib/quanli.php";
 	header("location: index.php");}
 ?>
 <?php
-	$mapb = $_SESSION["pb"];
-	$result = mysql_query(" SELECT count(id_kpi) as total, sum(trongso) as ts, sum(if(lcv='A',trongso,0)) as ts_a, sum(if(lcv='B',trongso,0)) as ts_b from kpi where id_pb = '$mapb'");
+	$result = mysql_query(" SELECT count(id_kpi) as total, sum(trongso) as ts, sum(if(lcv='A',trongso,0)) as ts_a, sum(if(lcv='B',trongso,0)) as ts_b from kpi");
 	$row = mysql_fetch_assoc($result);
 	$total_kpi = $row['total'];
 	$total_trongso = $row['ts'];
@@ -69,7 +68,7 @@ require"../lib/quanli.php";
 						<button type="button" id="nap_form" class="btn btn-info"><span class="glyphicon glyphicon-refresh"></span> Nạp lại</button>  
                           <button type="button" name="add" id="add" data-toggle="modal" data-target="#add_data_Modal" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Tạo KPI</button>  
                     	 </div>
-                    	 <div id="kqkpi_table">
+                    	 <div id="kpi_table">
 			               <table class="table table-bordered">
 							<thead>
 							<tr class="success">
@@ -94,9 +93,7 @@ require"../lib/quanli.php";
 						  	</thead>
 						  	<tbody>
 						  	<?php
-			               	$id_pb = $_SESSION['pb'];
-							$id_nh = $_SESSION['id_nh'];
-			                $xemkpi = xemkpi($id_pb,$id_nh);
+			                $xemkpi = xemkpis();
 							$stt = 0;
 							while ($row_xemkpi = mysql_fetch_array($xemkpi)){
 								ob_start();
@@ -153,11 +150,11 @@ require"../lib/quanli.php";
 						<div class="panel panel-default">
 						   	<div class="col-sm-3"> 
 						   	<div class="form-group">
-		  						<label> KPI giao: <?php echo $total_kpi;?></label>
+		  						<label> Tổng KPI: <?php echo $total_kpi;?></label>
 						   	</div></div>
 							<div class="col-sm-3"> 
 							<div class="form-group">
-		  						<label> Trọng số: <?php echo $total_trongso;?>%</label>
+		  						<label> Tổng Trọng số: <?php echo $total_trongso;?>%</label>
 						   	</div></div>
 						   	<div class="col-sm-3"> 
 						   	<div class="form-group">
@@ -182,7 +179,7 @@ require"../lib/quanli.php";
            <div class="modal-content">  
                 <div class="modal-header">  
                      <button type="button" class="close" data-dismiss="modal">&times;</button>  
-                     <h4 class="modal-title">Form tạo KPI</h4>  
+                     <h4 class="modal-title">Form Tạo KPI</h4>  
                 </div>  
                 <div class="modal-body">  
                      <form method="post" id="insert_form">
@@ -195,7 +192,7 @@ require"../lib/quanli.php";
                             <?php
                             $name=mysql_query("SELECT * from kfs");
 							while($rown = mysql_fetch_array($name)){?>
-	   						 <option value="<?php echo $rown['makfs']; ?>"><?php echo $rown['tenkfs']; ?></option>
+	   						 <option value="<?php echo $rown['makfs']; ?>"><?php echo $rown['makfs']; ?></option>
 						<?php }   
                             ?>
                           </select>  
@@ -247,7 +244,7 @@ require"../lib/quanli.php";
                             $name=mysql_query("SELECT * from nhanvien");
 							while($rown = mysql_fetch_array($name)){?>
 	   						 <option value="<?php echo $rown['manv']; ?>"><?php echo $rown['ten']; ?></option>
-						<?php }   
+							<?php }   
                             ?>
                           </select>
                           <br />
@@ -270,8 +267,11 @@ require"../lib/quanli.php";
            if($('#makpi').val() == "")  
            {  
                 alert("Bạn chưa nhập mã KPI");  
+           }else if($('#makfs').val() == '')  
+           {  
+                alert("Bạn chưa nhập mã KFS");  
            }  
-           else if($('#kpi').val() == '')  
+           else if($('#tenkpi').val() == '')  
            {  
                 alert("Bạn chưa nhập tên KPI");  
            }  
@@ -286,13 +286,13 @@ require"../lib/quanli.php";
            else  
            {  
                 $.ajax({  
-                     url:"kpi/themkqkpi.php",  
+                     url:"data_ajax/themkpi.php",  
                      method:"POST",  
                      data:$('#insert_form').serialize(),  
                      success:function(data){  
                           $('#insert_form')[0].reset();  
                           $('#add_data_Modal').modal('hide');  
-                          $('#kqkpi_table').html(data);  
+                          $('#kpi_table').html(data);  
                      }  
                 });  
            }  

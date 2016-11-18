@@ -89,7 +89,7 @@ function suanhanvien($id_nv){
 			return mysql_fetch_array($row);
 }
 function xemkqkpi($manv,$thang,$nam){
-	$qr = "SELECT * from kqkpi inner join kpi on kqkpi.makpi = kpi.makpi
+	$qr = "SELECT * from kqkpi inner join kpi on kqkpi.makpi = kpi.id_kpi
 			where manv = '$manv' and thang = '$thang' and nam ='$nam'
 			order by id_kqkpi desc
 			";
@@ -102,11 +102,31 @@ function xemkpi($id_pb,$id_nh){
 			";
 			return mysql_query($qr);
 }
+function xemkpis(){
+	$qr = "SELECT * from kpi inner join phongban on kpi.id_pb = phongban.id_pb inner join nhom on kpi.id_nh = nhom.id_nh
+			order by id_kpi desc
+			";
+			return mysql_query($qr);
+}
 function suakpi($id_kpi){
 	$qr = "SELECT * from kpi inner join phongban on kpi.id_pb = phongban.id_pb inner join nhom on kpi.id_nh = nhom.id_nh
 			WHERE id_kpi = '$id_kpi'
 			";
 			$row = mysql_query($qr);
 			return mysql_fetch_array($row);
+}
+function xemdoanhthu($manv,$thang,$nam){
+	$qr = "SELECT * from dlkpi inner join khachhang on dlkpi.makh = khachhang.makh
+			where manv = '$manv' and thang = '$thang' and nam ='$nam'
+			order by id_dlkpi desc
+			";
+			return mysql_query($qr);
+}
+function pheduyetkpi($manv,$thang,$nam,$idnv_sohuu){
+	$qr = "SELECT * from kqkpi inner join kpi on kqkpi.makpi = kpi.id_kpi
+			where manv = '$manv' and thang = '$thang' and nam ='$nam' and idnv_sohuu = '$idnv_sohuu'
+			order by id_kqkpi desc
+			";
+			return mysql_query($qr);
 }
 ?>

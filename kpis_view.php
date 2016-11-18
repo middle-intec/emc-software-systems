@@ -13,7 +13,7 @@ require"lib/quanli.php";
 	$row = mysql_fetch_assoc($result);
 	$total_kpi = $row['total'];
 	$total_trongso = $row['ts'];
-	$result_ts = mysql_query(" SELECT sum(if(lcv='A',kqkpi.trongso,0)) as ts_a, sum(if(lcv='B',kqkpi.trongso,0)) as ts_b, sum((kqkpi.kq/kqkpi.mt)*kqkpi.trongso) as tylets, sum(if(lcv='A',kqkpi.trongso*(kq/kqkpi.mt),0)) as tylets_a, sum(if(lcv='B',kqkpi.trongso*(kq/kqkpi.mt),0)) as tylets_b, sum(((kqkpi.kq/kqkpi.mt)*kqkpi.trongso)*(pt)) as total_pt, sum(((kqkpi.kq/kqkpi.mt)*kqkpi.trongso)*(tl)) as total_tl, sum(((kqkpi.kq/kqkpi.mt)*kqkpi.trongso)*(tgd)) as total_tgd from kqkpi inner join kpi on kqkpi.makpi = kpi.makpi where manv = '$manv'");
+	$result_ts = mysql_query(" SELECT sum(if(lcv='A',trongso,0)) as ts_a, sum(if(lcv='B',trongso,0)) as ts_b, sum((kq/mt)*trongso) as tylets, sum(if(lcv='A',trongso*(kq/mt),0)) as tylets_a, sum(if(lcv='B',trongso*(kq/mt),0)) as tylets_b, sum(((kq/mt)*trongso)*(pt)) as total_pt, sum(((kq/mt)*trongso)*(tl)) as total_tl, sum(((kq/mt)*trongso)*(tgd)) as total_tgd from kqkpi where manv = '$manv'");
 	$row_ts = mysql_fetch_assoc($result_ts);
 	$total_trongsoA = $row_ts['ts_a'];
 	$total_trongsoB = $row_ts['ts_b'];
@@ -67,8 +67,15 @@ require"lib/quanli.php";
 							<div class="tab-pane fade in active" id="tab2">
 							<ul class="nav nav-pills">
 								<li class="active"><a href="#pilltab1" data-toggle="tab"> Đăng ký KPIs</a></li>
-								<li><a href="#pilltab2" data-toggle="tab">Đăng ký Doanh Thu</a></li>
-								<li><a href="#pilltab3" data-toggle="tab">Phê Duyệt KPIs </a></li>
+								<li><a href="dangkydoanhthu.php">Đăng ký Doanh Thu</a></li>
+								<?php
+								if(($_SESSION['level'])==2){
+									echo '<li><a href="kiemduyetkpi.php">Phê Duyệt KPIs </a></li>';
+								}?>
+								<?php
+								if(($_SESSION['level']==1)or($_SESSION['level']==5)){
+									echo '<li><a href="kkiemduyetkpi.php">Phê Duyệt KPI </a></li>';
+								}?>
 							</ul>
 		
 						<div class="tab-content">
@@ -91,12 +98,12 @@ require"lib/quanli.php";
 						  		<th>BC</th>
 						  		<th>TS</th>
 						  		<th>MT</th>
-						  		<th>KQ</th>
 						  		<th>HDCT</th>
+						  		<th>KQ</th>
+						  		<th>Kết quả HĐCT</th>
 						  		<th>PT</th>
 						  		<th>TL</th>
 						  		<th>TGĐ</th>
-						  		<th>Kết quả HĐCT</th>
 						  		<th width="85px">Chức năng</th>
 						  	</tr>
 						  	</thead>
@@ -114,14 +121,15 @@ require"lib/quanli.php";
 			        		<tr class="roweven" id ="{id_kqkpi}">
 			        			<td><?php echo $stt;?></td>
 			        			<td>{makpi}</td>
-						  		<td>{kpi}</td>
+						  		<td><span  data-toggle="tooltip" title="{chuthich}">{kpi}</span></td>
 						  		<td>{lcv}</td>
 						  		<td>{dvt}</td>
 						  		<td>{bc}</td>
 						  		<td>{ts}%</td>
 						  		<td>{mt}</td>
-			        			<td>{kq}</td>
 			        			<td>{hdct}</td>
+			        			<td>{kq}</td>
+			        			<td>{ghichu}</td>
 			        			<td><input disabled="disabled" type="checkbox" <?php 
 			         if(($row_xemkqkpi["pt"])==1){echo ' checked="checked"';}
 			        			 ?> /></td>
@@ -131,7 +139,6 @@ require"lib/quanli.php";
 			        			<td><input disabled="disabled" type="checkbox"<?php 
 			         if(($row_xemkqkpi["tgd"])==1){echo ' checked="checked"';}
 			        			 ?> /></td>
-			        			<td>{ghichu}</td>
 			        			<td width="85px">
 								 <div class="btn-group">
 								  <button type="button" data-toggle="modal" data-target="#dataModal" data-id="{id_kqkpi}" class="btn btn-primary btn-xs xemkqkpi">Xem</button>
@@ -158,6 +165,7 @@ require"lib/quanli.php";
 				$s = str_replace("{kq}", $row_xemkqkpi["kq"], $s);
 				$s = str_replace("{hdct}", $row_xemkqkpi["hdct"], $s);
 				$s = str_replace("{ghichu}", $row_xemkqkpi["ghichu"], $s);
+				$s = str_replace("{chuthich}", $row_xemkqkpi["giaithich"], $s);
 				echo $s; 
 				}
 				?>
@@ -388,5 +396,6 @@ require"lib/quanli.php";
 	$('#nap_form').click(function(){  
            location.reload();  
       		});
+	$('[data-toggle="tooltip"]').tooltip(); 
  });  
  </script> 

@@ -7,7 +7,7 @@
 	if($num > 0){
 		while($row = mysql_fetch_array($query)){	
 ?>
-	<option value="<?php echo $row['trongso']?>"><?php echo $row['trongso']?>%</option>
+	<input type="hidden" name="giaithich" value="<?php echo $row['chuthich']?>">
 <?php
 		}
 	}

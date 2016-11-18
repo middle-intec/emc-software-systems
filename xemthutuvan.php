@@ -164,7 +164,7 @@ require"lib/quanli.php";
 			  		<?php
 			  		$CurrentThang = date("m");
 					$level = $_SESSION["level"];
-			  		if(((($CurrentThang)>($thang))&(($level)>=2))or((($row_vietthutuvan["duyet"])==1)&($level>=2))){
+			  		if((($row_vietthutuvan["duyet"])==1)&($level>=2)){
 			  			echo '<td align="center">
 			  			<span>Hết hạn Sửa hoặc Xóa </span>
 	                	</td>';

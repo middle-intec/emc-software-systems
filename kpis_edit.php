@@ -77,7 +77,7 @@ if(isset($_POST["edit"])){
 							<div class="tab-pane fade in active" id="tab2">
 							<ul class="nav nav-pills">
 								<li class="active"><a href="#pilltab1" data-toggle="tab"> Đăng ký KPIs</a></li>
-								<li><a href="#pilltab2" data-toggle="tab">Đăng ký Doanh Thu</a></li>
+								<li><a href="dangkydoanhthu.php">Đăng ký Doanh Thu</a></li>
 								<li><a href="#pilltab3" data-toggle="tab">Phê Duyệt KPIs </a></li>
 							</ul>
 		

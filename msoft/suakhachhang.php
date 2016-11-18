@@ -82,6 +82,7 @@ $row_suakhachhang = suakhachhang($id_kh);
 	   					<div class="form-group">
   						<label>Nhân viên QL</label>
 						<select class="form-control" name="id_nv"> 
+						<option value="0"> Tạm Ngưng </option>
 						<?php 
 							$name=mysql_query("select * from nhanvien where pb=3");
 									while($rown = mysql_fetch_array($name)){?>

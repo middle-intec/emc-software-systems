@@ -6,6 +6,8 @@ require"lib/quanli.php";
 <?php 
 	if (!isset($_SESSION["id_nv"]) ){
 	header("location: index.php");}
+	if ((($_SESSION["pb"])!=1)&(($_SESSION["pb"])!=3)){
+	header("location: kpis.php");}
 ?>
 
 <?php 

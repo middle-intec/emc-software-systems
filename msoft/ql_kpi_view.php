@@ -9,7 +9,8 @@ require"../lib/quanli.php";
 ?>
 <?php
 	$mapb = $_GET['pb'];
-	$result = mysql_query(" SELECT count(id_kpi) as total, sum(trongso) as ts, sum(if(lcv='A',trongso,0)) as ts_a, sum(if(lcv='B',trongso,0)) as ts_b from kpi where id_pb = '$mapb'");
+	$id_nh = $_GET['nhom'];
+	$result = mysql_query(" SELECT count(id_kpi) as total, sum(trongso) as ts, sum(if(lcv='A',trongso,0)) as ts_a, sum(if(lcv='B',trongso,0)) as ts_b from kpi where id_pb = '$mapb' and id_nh = '$id_nh'");
 	$row = mysql_fetch_assoc($result);
 	$total_kpi = $row['total'];
 	$total_trongso = $row['ts'];
@@ -42,7 +43,7 @@ require"../lib/quanli.php";
 						<button type="button" id="nap_form" class="btn btn-info"><span class="glyphicon glyphicon-refresh"></span> Nạp lại</button>  
                         <button type="button" name="add" id="add" data-toggle="modal" data-target="#add_data_Modal" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Tạo KPI</button>  
                     </div>
-                    <div id="kqkpi_table">
+                    <div id="kpi_table">
 			        <table class="table table-bordered">
 							<thead>
 							<tr class="success">
@@ -150,44 +151,83 @@ require"../lib/quanli.php";
 </body>
 
 </html> 
- <div id="add_data_Modal" class="modal fade">  
+<div id="add_data_Modal" class="modal fade">  
       <div class="modal-dialog">  
            <div class="modal-content">  
                 <div class="modal-header">  
                      <button type="button" class="close" data-dismiss="modal">&times;</button>  
-                     <h4 class="modal-title">Form đăng ký KPI</h4>  
+                     <h4 class="modal-title">Form Tạo KPI</h4>  
                 </div>  
                 <div class="modal-body">  
                      <form method="post" id="insert_form">
-                       	<input type="hidden" name="manv" value = "<?php echo $_SESSION['id_nv'];?>" class="form-control">
                           <label>Mã KPI</label>
-                          <select name="makpi" id="makpi" class="form-control makpi"> 
-                           <option value="">Chọn KPI</option> 
+                          <input type="text" name="makpi" id="makpi" class="form-control">
+                          <br/>
+                          <label>Mã KFS</label>
+                          <select name="makfs" id="makfs" class="form-control"> 
+                           <option value="">Chọn KFS</option> 
                             <?php
-                            $pb = $_SESSION['pb'];
-                            $nhom = $_SESSION['id_nh'];
-                            $name=mysql_query("SELECT makpi from kpi where id_pb = '$pb' and id_nh = '$nhom' ");
+                            $name=mysql_query("SELECT * from kfs");
 							while($rown = mysql_fetch_array($name)){?>
-	   						 <option value="<?php echo $rown['makpi']; ?>"><?php echo $rown['makpi']; ?></option>
+	   						 <option value="<?php echo $rown['makfs']; ?>"><?php echo $rown['tenkfs']; ?></option>
 						<?php }   
                             ?>
                           </select>  
                           <br />  
-                          <label>KPI</label>
-                          <select name="kpi" id="kpi" class="form-control kpi">  
-                               <option value="">Tên KPI</option>  
+                          <label>Tên KPI</label> 
+                          <input type="text" name="tenkpi" id="tenkpi" class="form-control">   
+                          <br />  
+                          <label>Đơn vị tính</label> 
+                          <input type="text" name="dvt" id="dvt" class="form-control">   
+                          <br />
+                          <label>Báo cáo</label> 
+                          <input type="text" name="bc" id="bc" class="form-control">   
+                          <br />
+                          <label>Trọng số</label> 
+                          <input type="text" name="trongso" id="trongso" class="form-control">   
+                          <br />
+                          <label> Mục tiêu</label> 
+                          <input type="text" name="mt" id="mt" class="form-control">   
+                          <br /> 
+                          <label> Phòng</label> 
+                           <select name="id_pb" id="id_pb" class="form-control"> 
+                           <option value="">Chọn Phòng </option> 
+                            <?php
+                            $name=mysql_query("SELECT * from phongban");
+							while($rown = mysql_fetch_array($name)){?>
+	   						 <option value="<?php echo $rown['id_pb']; ?>"><?php echo $rown['phongban']; ?></option>
+						<?php }   
+                            ?>
                           </select>
-                          <br />  
-                          <label>Trọng số</label>  
-                          <select name="trongso" id="trongso" class="form-control trongso">
-                               <option value="">Trọng số</option>  
+                          <br />
+                          <label> Nhóm</label>
+                          <select name="id_nh" id="id_nh" class="form-control"> 
+                           <option value="">Chọn Nhóm </option> 
+                            <?php
+                            $name=mysql_query("SELECT * from nhom");
+							while($rown = mysql_fetch_array($name)){?>
+	   						 <option value="<?php echo $rown['id_nh']; ?>"><?php echo $rown['tennhom']; ?></option>
+						<?php }   
+                            ?>
                           </select>  
-                          <br />  
-                          <label>Mục tiêu</label>
-                          <select name="mt" id="mt" class="form-control mt">
-                               <option value="">Mục tiêu</option>  
-                          </select>  
-                          <br />  
+                          <br />
+                          <label> Loại công việc</label> 
+                          <input type="text" name="lcv" id="lcv" class="form-control">   
+                          <br />
+                          <label> Nhân viên Sở hữu</label>
+                          <select name="idnv_sohuu" id="idnv_sohuu" class="form-control"> 
+                           <option value="">Chọn Nhân viên </option> 
+                            <?php
+                            $name=mysql_query("SELECT * from nhanvien");
+							while($rown = mysql_fetch_array($name)){?>
+	   						 <option value="<?php echo $rown['manv']; ?>"><?php echo $rown['ten']; ?></option>
+							<?php }   
+                            ?>
+                          </select>
+                          <br />
+                          <label> Giải thích</label> 
+                          <textarea name="chuthich" id="chuthich" class="form-control"></textarea>
+                          <br /> 
                           <input type="submit" name="insert" id="insert" value="Lưu ngay" class="btn btn-success" />  
                      </form>  
                 </div>  
@@ -197,15 +237,18 @@ require"../lib/quanli.php";
            </div>  
       </div>  
  </div>
- <script>  
+ <script>
  $(document).ready(function(){
       $('#insert_form').on("submit", function(event){  
            event.preventDefault();  
            if($('#makpi').val() == "")  
            {  
                 alert("Bạn chưa nhập mã KPI");  
+           }else if($('#makfs').val() == '')  
+           {  
+                alert("Bạn chưa nhập mã KFS");  
            }  
-           else if($('#kpi').val() == '')  
+           else if($('#tenkpi').val() == '')  
            {  
                 alert("Bạn chưa nhập tên KPI");  
            }  
@@ -220,13 +263,13 @@ require"../lib/quanli.php";
            else  
            {  
                 $.ajax({  
-                     url:"kpi/themkqkpi.php",  
+                     url:"data_ajax/themkpi.php",  
                      method:"POST",  
                      data:$('#insert_form').serialize(),  
                      success:function(data){  
                           $('#insert_form')[0].reset();  
                           $('#add_data_Modal').modal('hide');  
-                          $('#kqkpi_table').html(data);  
+                          $('#kpi_table').html(data);  
                      }  
                 });  
            }  

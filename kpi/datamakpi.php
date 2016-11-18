@@ -1,7 +1,7 @@
 <?php
 	require"../lib/mConnection.php";
 	$key = $_POST['id'];
-	$sql = "select * from kpi where makpi = '$key'";
+	$sql = "select * from kpi where id_kpi = '$key'";
 	$query = mysql_query($sql);
 	$num = mysql_num_rows($query);
 	if($num > 0){

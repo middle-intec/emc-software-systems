@@ -13,7 +13,7 @@ require"lib/quanli.php";
 	$row = mysql_fetch_assoc($result);
 	$total_kpi = $row['total'];
 	$total_trongso = $row['ts'];
-	$result_ts = mysql_query(" SELECT sum(if(lcv='A',kqkpi.trongso,0)) as ts_a, sum(if(lcv='B',kqkpi.trongso,0)) as ts_b, sum((kqkpi.kq/kqkpi.mt)*kqkpi.trongso) as tylets, sum(if(lcv='A',kqkpi.trongso*(kq/kqkpi.mt),0)) as tylets_a, sum(if(lcv='B',kqkpi.trongso*(kq/kqkpi.mt),0)) as tylets_b, sum(((kqkpi.kq/kqkpi.mt)*kqkpi.trongso)*(pt)) as total_pt, sum(((kqkpi.kq/kqkpi.mt)*kqkpi.trongso)*(tl)) as total_tl, sum(((kqkpi.kq/kqkpi.mt)*kqkpi.trongso)*(tgd)) as total_tgd from kqkpi inner join kpi on kqkpi.makpi = kpi.makpi where manv = '$manv'");
+	$result_ts = mysql_query(" SELECT sum(if(lcv='A',trongso,0)) as ts_a, sum(if(lcv='B',trongso,0)) as ts_b, sum((kq/mt)*trongso) as tylets, sum(if(lcv='A',trongso*(kq/mt),0)) as tylets_a, sum(if(lcv='B',trongso*(kq/mt),0)) as tylets_b, sum(((kq/mt)*trongso)*(pt)) as total_pt, sum(((kq/mt)*trongso)*(tl)) as total_tl, sum(((kq/mt)*trongso)*(tgd)) as total_tgd from kqkpi where manv = '$manv'");
 	$row_ts = mysql_fetch_assoc($result_ts);
 	$total_trongsoA = $row_ts['ts_a'];
 	$total_trongsoB = $row_ts['ts_b'];
@@ -69,8 +69,15 @@ require"lib/quanli.php";
 							<div class="tab-pane fade in active" id="tab2">
 							<ul class="nav nav-pills">
 								<li class="active"><a href="#pilltab1" data-toggle="tab"> Đăng ký KPIs</a></li>
-								<li><a href="#pilltab2" data-toggle="tab">Đăng ký Doanh Thu</a></li>
-								<li><a href="#pilltab3" data-toggle="tab">Phê Duyệt KPIs </a></li>
+								<li><a href="dangkydoanhthu.php">Đăng ký Doanh Thu</a></li>
+								<?php
+								if(($_SESSION['level'])==2){
+									echo '<li><a href="kiemduyetkpi.php">Phê Duyệt KPIs </a></li>';
+								}?>
+								<?php
+								if(($_SESSION['level']==1)or($_SESSION['level']==5)){
+									echo '<li><a href="kkiemduyetkpi.php">Phê Duyệt KPI </a></li>';
+								}?>
 							</ul>
 		
 						<div class="tab-content">
@@ -82,12 +89,25 @@ require"lib/quanli.php";
 				<div class="form-group">
                 <label for="email">Nhân viên:</label>
                 <select class="form-control" name="manv" style="width: 200px;">
-				<?php
+				<?php 
+				$pb = $_SESSION['pb'];
+				if (($_SESSION["level"]) > 2){
 				$manv = $_SESSION["manv"];
 				$name=mysql_query("select * from nhanvien where manv = '$manv'");
-				while($rown = mysql_fetch_array($name)){?>
-   				<option value="<?php echo $rown["id_nv"]; ?>"><?php echo $rown['ten']; ?></option>
+						while($rown = mysql_fetch_array($name)){?>
+   						 <option value="<?php echo $_SESSION["id_nv"]; ?>"><?php echo $rown['ten']; ?></option>
 					<?php }
+				}elseif((($_SESSION["level"]) >= 2)&($pb = 3)){
+				$name=mysql_query("select * from nhanvien where pb = '$pb'");
+						while($rown = mysql_fetch_array($name)){?>
+   						 <option value="<?php echo $rown['id_nv']; ?>"><?php echo $rown['ten']; ?></option>
+					<?php }
+				}else{
+				$name=mysql_query("select * from nhanvien where id_nv <> 1");
+						while($rown = mysql_fetch_array($name)){?>
+   						 <option value="<?php echo $rown['id_nv']; ?>"><?php echo $rown['ten']; ?></option>
+					<?php }
+				}
 				 ?>
    				</select></div>
    				<div class="form-group">
@@ -112,6 +132,7 @@ require"lib/quanli.php";
                <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-repeat"></span> Xem</button></div>
                 </form>
 						</div></div>  
+
 						<div class="table-responsive">
 						<div class="form-group" align="right">
 						<button type="button" id="nap_form" class="btn btn-info"><span class="glyphicon glyphicon-refresh"></span> Nạp lại</button>  
@@ -129,12 +150,12 @@ require"lib/quanli.php";
 						  		<th>BC</th>
 						  		<th>TS</th>
 						  		<th>MT</th>
+						  		<th>HĐCT</th>
 						  		<th>KQ</th>
-						  		<th>HDCT</th>
+						  		<th>Kết quả HĐCT</th>
 						  		<th>PT</th>
 						  		<th>TL</th>
 						  		<th>TGĐ</th>
-						  		<th>Kết quả HĐCT</th>
 						  		<th width="85px">Chức năng</th>
 						  	</tr>
 						  	</thead>
@@ -158,8 +179,9 @@ require"lib/quanli.php";
 						  		<td>{bc}</td>
 						  		<td>{ts}%</td>
 						  		<td>{mt}</td>
-			        			<td>{kq}</td>
 			        			<td>{hdct}</td>
+			        			<td>{kq}</td>
+			        			<td>{ghichu}</td>
 			        			<td><input disabled="disabled" type="checkbox" <?php 
 			         if(($row_xemkqkpi["pt"])==1){echo ' checked="checked"';}
 			        			 ?> /></td>
@@ -169,7 +191,6 @@ require"lib/quanli.php";
 			        			<td><input disabled="disabled" type="checkbox"<?php 
 			         if(($row_xemkqkpi["tgd"])==1){echo ' checked="checked"';}
 			        			 ?> /></td>
-			        			<td>{ghichu}</td>
 			        			<td width="85px">
 								 <div class="btn-group">
 								  <button type="button" data-toggle="modal" data-target="#dataModal" data-id="{id_kqkpi}" class="btn btn-primary btn-xs xemkqkpi">Xem</button>
@@ -177,8 +198,23 @@ require"lib/quanli.php";
 								    <span class="caret"></span>
 								  </button>
 								  <ul class="dropdown-menu" role="menu">
-								    <li><a class="btn btn-default btn-xs" href="kpis_edit.php?id_kqkpi={id_kqkpi}">Sửa</a></li>
-								    <li><a class="btn btn-default btn-xs xoakqkpi" data-id="{id_kqkpi}">Xóa</a></li>
+								  <?php
+								  $level = $_SESSION["level"];
+					if((($row_xemkqkpi["pt"])==1)&($level>=2)){
+						echo '<li align="center">
+			  			<span>Hết hạn Sửa hoặc Xóa </span>
+	                	</li>';
+					}elseif((($row_xemkqkpi["tl"])==1)&($level>=3)){
+						echo '<li align="center">
+			  			<span>Hết hạn Sửa hoặc Xóa </span>
+	                	</li>';
+					}else{
+						echo '
+					<li><a class="btn btn-default btn-xs" href="kpis_edit.php?id_kqkpi={id_kqkpi}">Sửa</a></li>
+					<li><a class="btn btn-default btn-xs xoakqkpi" data-id="{id_kqkpi}">Xóa</a></li>
+						';
+					}
+								  ?>
 								  </ul>
 								</div>			
 			                	</td>
@@ -196,7 +232,7 @@ require"lib/quanli.php";
 				$s = str_replace("{kq}", $row_xemkqkpi["kq"], $s);
 				$s = str_replace("{hdct}", $row_xemkqkpi["hdct"], $s);
 				$s = str_replace("{ghichu}", $row_xemkqkpi["ghichu"], $s);
-				$s = str_replace("{chuthich}", $row_xemkqkpi["chuthich"], $s);
+				$s = str_replace("{chuthich}", $row_xemkqkpi["giaithich"], $s);
 				echo $s; 
 				}
 				?>
@@ -310,9 +346,9 @@ require"lib/quanli.php";
                             <?php
                             $pb = $_SESSION['pb'];
                             $nhom = $_SESSION['id_nh'];
-                            $name=mysql_query("SELECT makpi from kpi where id_pb = '$pb' and id_nh = '$nhom' ");
+                            $name=mysql_query("SELECT id_kpi, makpi from kpi where id_pb = '$pb' and id_nh = '$nhom' ");
 							while($rown = mysql_fetch_array($name)){?>
-	   						 <option value="<?php echo $rown['makpi']; ?>"><?php echo $rown['makpi']; ?></option>
+	   						 <option value="<?php echo $rown['id_kpi']; ?>"><?php echo $rown['makpi']; ?></option>
 						<?php }   
                             ?>
                           </select>  
@@ -331,54 +367,15 @@ require"lib/quanli.php";
                           <select name="mt" id="mt" class="form-control mt">
                                <option value="">Mục tiêu</option>  
                           </select>  
-                          <br />  
-                          <input type="submit" name="insert" id="insert" value="Lưu ngay" class="btn btn-success" />  
-                     </form>  
-                </div>  
-                <div class="modal-footer">  
-                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>  
-                </div>  
-           </div>  
-      </div>  
- </div>
-  <div id="add_doanhthu_Modal" class="modal fade">  
-      <div class="modal-dialog">  
-           <div class="modal-content">  
-                <div class="modal-header">  
-                     <button type="button" class="close" data-dismiss="modal">&times;</button>  
-                     <h4 class="modal-title">Form đăng ký Doanh thu</h4>  
-                </div>  
-                <div class="modal-body">  
-                     <form method="post" id="insert_form_DT">
-                       	<input type="hidden" name="manv" value = "<?php echo $_SESSION['id_nv'];?>" class="form-control">
-                          <label>Mã KPI</label>
-                          <select name="makpi" id="makpi" class="form-control makpi"> 
-                           <option value="">Chọn KPI</option> 
-                            <?php
-                            $pb = $_SESSION['pb'];
-                            $nhom = $_SESSION['id_nh'];
-                            $name=mysql_query("SELECT makpi from kpi where id_pb = '$pb' and id_nh = '$nhom' ");
-							while($rown = mysql_fetch_array($name)){?>
-	   						 <option value="<?php echo $rown['makpi']; ?>"><?php echo $rown['makpi']; ?></option>
-						<?php }   
-                            ?>
-                          </select>  
-                          <br />  
-                          <label>KPI</label>
-                          <select name="kpi" id="kpi" class="form-control kpi">  
-                               <option value="">Tên KPI</option>  
-                          </select>
-                          <br />  
-                          <label>Trọng số</label>  
-                          <select name="trongso" id="trongso" class="form-control trongso">
-                               <option value="">Trọng số</option>  
-                          </select>  
-                          <br />  
-                          <label>Mục tiêu</label>
-                          <select name="mt" id="mt" class="form-control mt">
-                               <option value="">Mục tiêu</option>  
-                          </select>  
-                          <br />  
+                          <br />
+                          <div class="lcv"></div> 
+                          <br />
+                          <div class="dvt"></div> 
+                          <br />
+                          <div class="bc"></div> 
+                          <br />
+                          <div class="giaithich"></div> 
+                          <br />
                           <input type="submit" name="insert" id="insert" value="Lưu ngay" class="btn btn-success" />  
                      </form>  
                 </div>  
@@ -425,7 +422,7 @@ require"lib/quanli.php";
                 });  
            }  
       });      
-      $(".xemkqkpi").click(function(){
+    $(".xemkqkpi").click(function(){
 		var id = $(this).attr('data-id');
 		$.post("kpi/xemkqkpi.php", {id: id}, function(data){
 			$("#kqkpi_chitiet").html(data);
@@ -447,6 +444,30 @@ require"lib/quanli.php";
 		var id = $(".makpi").val();
 		$.post("kpi/datamt.php", {id: id}, function(data){
 			$(".mt").html(data);
+		})
+	})
+	$(".makpi").change(function(){
+		var id = $(".makpi").val();
+		$.post("kpi/datalcv.php", {id: id}, function(data){
+			$(".lcv").html(data);
+		})
+	})
+	$(".makpi").change(function(){
+		var id = $(".makpi").val();
+		$.post("kpi/datagiaithich.php", {id: id}, function(data){
+			$(".giaithich").html(data);
+		})
+	})
+	$(".makpi").change(function(){
+		var id = $(".makpi").val();
+		$.post("kpi/datadvt.php", {id: id}, function(data){
+			$(".dvt").html(data);
+		})
+	})
+	$(".makpi").change(function(){
+		var id = $(".makpi").val();
+		$.post("kpi/databc.php", {id: id}, function(data){
+			$(".bc").html(data);
 		})
 	})
 

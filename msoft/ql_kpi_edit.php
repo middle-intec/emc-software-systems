@@ -143,7 +143,7 @@ if(isset($_POST["edit"])){
 						<?php 
 						$name=mysql_query("select * from nhanvien");
 								while($rown = mysql_fetch_array($name)){?>
-		   						 <option value="<?php echo $rown["manv"]; ?>"><?php echo $rown['ten']; ?></option>
+		   						 <option value="<?php echo $rown["id_nv"]; ?>"><?php echo $rown['ten']; ?></option>
 							<?php }
 						?>
 	   					</select>
