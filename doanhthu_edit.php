@@ -13,9 +13,19 @@ if(isset($_POST["exit"])){
 }
 if(isset($_POST["edit"])){
       $id_dlkpi = $_GET['id_dlkpi'];
-      $dthu = $_POST["dthu"];  
+      $tamtinh = $_POST["tamtinh"];  
       $phaithu = $_POST["phaithu"];  
-      $dathu = $_POST["dathu"];
+      $damnhan = $_POST["damnhan"];
+      $nodk = $_POST["nodk"];
+      $thucthu = $_POST["thucthu"];
+      $timetuvan = $_POST["timetuvan"];
+      $timecungcapdichvu = $_POST["timecungcapdichvu"];
+      $loaihd = $_POST["loaihd"];
+      $doanhthu = $_POST["doanhthu"];
+      $dttinhluong = $_POST["dttinhluong"];
+      $hdmat = $_POST["hdmat"];
+      $tamngung = $_POST["tamngung"];
+      $ghichu = $_POST["ghichu"];
       $tuvan = $_POST["tuvan"];
       $indct = $_POST["indct"];
       $giaoct = $_POST["giaoct"];
@@ -27,7 +37,7 @@ if(isset($_POST["edit"])){
       $gthdmoi = $_POST["gthdmoi"];
       $dvkhac = $_POST["dvkhac"];
       $query = "  
-      UPDATE dlkpi set dthu = '$dthu',phaithu = '$phaithu',dathu = '$dathu',tuvan = '$tuvan',indct = '$indct',giaoct = '$giaoct',bct = '$bct',bctc = '$bctc',sailoi = '$sailoi', hailong = '$hailong', kytiep = '$kytiep',  gthdmoi = '$gthdmoi', dvkhac = '$dvkhac'
+      UPDATE dlkpi set tamtinh = '$tamtinh',phaithu = '$phaithu',damnhan = '$damnhan',nodk = '$nodk',tuvan = '$tuvan',indct = '$indct',giaoct = '$giaoct',bct = '$bct',bctc = '$bctc',sailoi = '$sailoi', hailong = '$hailong', kytiep = '$kytiep',  gthdmoi = '$gthdmoi', dvkhac = '$dvkhac', ghichu = '$ghichu', thucthu = '$thucthu',timetuvan = '$timetuvan', timecungcapdichvu = '$timecungcapdichvu', loaihd = '$loaihd', doanhthu = '$doanhthu', dttinhluong = '$dttinhluong', hdmat = '$hdmat', tamngung = '$tamngung'
       where id_dlkpi = '$id_dlkpi'
       ";  
      mysql_query($query);
@@ -59,7 +69,7 @@ if(isset($_POST["edit"])){
 						<ul class="nav nav-tabs">
 							<li><a href="#tab1" data-toggle="tab">Công ty</a></li>
 							<li class="active"><a href="#tab2" data-toggle="tab">KPIs của tôi</a></li>
-							<li><a href="#tab3" data-toggle="tab">Phòng <?php
+							<li><a href="kpis_phong.php">Phòng <?php
 							$manv = $_SESSION["manv"];
 							$name=mysql_query("select * from nhanvien inner join phongban on nhanvien.pb = phongban.id_pb where manv = '$manv'");
 							while($rown = mysql_fetch_array($name)){
@@ -78,7 +88,7 @@ if(isset($_POST["edit"])){
 							<div class="tab-pane fade in active" id="tab2">
 							<ul class="nav nav-pills">
 								<li><a href="kpis.php"> Đăng ký KPIs</a></li>
-								<li class="active"><a href="#pilltab2" data-toggle="tab"> Đăng ký Doanh Thu</a></li>
+								<li class="active"><a href="#pilltab2" data-toggle="tab"> Đăng ký Khách hàng</a></li>
 							</ul>
 		
 						<div class="tab-content">
@@ -92,84 +102,154 @@ if(isset($_POST["edit"])){
   if($num > 0){
     while($row = mysql_fetch_array($query)){  
 ?>
-<form action="" method="POST">
+<form class="form-horizontal" action="" method="POST">
 <div class="col-sm-6">
 <div class="form-group">
-     <label> Mã Khách hàng</label>
-     <input type="text" disabled value="<?php echo $row['makh'];?>" class="form-control">
+     <label class="control-label col-sm-4"> Mã Khách hàng:</label>
+     <div class="col-sm-8">
+     <input type="text" disabled value="<?php echo $row['makh'];?>" class="form-control"></div>
 </div>
 <div class="form-group">
-      <label> Doanh thu </label>
-      <input type="text" value="<?php echo $row['dthu'];?>" class="form-control" name="dthu">
+      <label class="control-label col-sm-4"> Tạm tính:</label>
+      <div class="col-sm-8">
+      <input type="text" value="<?php echo $row['tamtinh'];?>" class="form-control" name="tamtinh"></div>
 </div>
 <div class="form-group">
-      <label> Phải thu</label>
-      <input type="text" value="<?php echo $row['phaithu'];?>" class="form-control" name="phaithu">
+      <label class="control-label col-sm-4"> Phải thu:</label>
+      <div class="col-sm-8">
+      <input type="text" value="<?php echo $row['phaithu'];?>" class="form-control" name="phaithu"></div>
 </div>
 <div class="form-group">
-      <label> Đã thu</label>
-      <input type="text" value="<?php echo $row['dathu'];?>" class="form-control" name="dathu">
+      <label class="control-label col-sm-4"> % đảm nhận:</label>
+      <div class="col-sm-8">
+      <input type="text" value="<?php echo $row['damnhan'];?>" class="form-control" name="damnhan"></div>
 </div>
 <div class="form-group">
-      <label> Thư tư vấn</label>
-      <label class="radio-inline"><input <?php 
-               if(($row["tuvan"])==1){echo ' checked="checked"';}?> value="1" type="radio" name="tuvan">Có</label>
-      <label class="radio-inline"><input value="0" type="radio" name="tuvan">Không</label>
+      <label class="control-label col-sm-4"> Nợ ĐK:</label>
+      <div class="col-sm-8">
+      <input type="text" value="<?php echo $row['nodk'];?>" class="form-control" name="nodk"></div>
 </div>
 <div class="form-group">
-      <label> In đóng chứng từ</label>
-      <label class="radio-inline"><input <?php 
-               if(($row["indct"])==1){echo ' checked="checked"';}?> value="1" type="radio" name="indct">Có</label>
-      <label class="radio-inline"><input value="0" type="radio" name="indct">Không</label>
-</div></div>
+      <label class="control-label col-sm-4"> Thực thu:</label>
+      <div class="col-sm-8">
+      <input type="text" value="<?php echo $row['thucthu'];?>" class="form-control" name="thucthu"></div>
+</div>
+<div class="form-group">
+      <label class="control-label col-sm-4"> Thời gian TV (phút):</label>
+      <div class="col-sm-8">
+      <input type="text" value="<?php echo $row['timetuvan'];?>" class="form-control" name="timetuvan"></div>
+</div>
+<div class="form-group">
+      <label class="control-label col-sm-4"> Thời gian cung cấp DV (Phút):</label>
+      <div class="col-sm-8">
+      <input type="text" value="<?php echo $row['timecungcapdichvu'];?>" class="form-control" name="timecungcapdichvu"></div>
+</div>
+<div class="form-group">
+      <label class="control-label col-sm-4"> Loại HĐ phát sinh:</label>
+      <div class="col-sm-8">
+      <input type="text" value="<?php echo $row['loaihd'];?>" class="form-control" name="loaihd"></div>
+</div>
+<div class="form-group">
+      <label class="control-label col-sm-4"> Doanh thu phát sinh:</label>
+      <div class="col-sm-8">
+      <input type="text" value="<?php echo $row['doanhthu'];?>" class="form-control" name="doanhthu"></div>
+</div>
+<div class="form-group">
+      <label class="control-label col-sm-4"> Doanh thu tính lương:</label>
+      <div class="col-sm-8">
+      <input type="text" value="<?php echo $row['dttinhluong'];?>" class="form-control" name="dttinhluong"></div>
+</div>
+</div>
 <div class="col-sm-6">
 <div class="form-group">
-     <label> Giao chứng từ</label>
+      <label class="control-label col-sm-4"> Hợp động mất:</label>
+      <div class="col-sm-8">
       <label class="radio-inline"><input <?php 
-               if(($row["giaoct"])==1){echo ' checked="checked"';}?> value="1" type="radio" name="giaoct">Có</label>
-      <label class="radio-inline"><input value="0" type="radio" name="giaoct">Không</label>
+               if(($row["hdmat"])==1){echo 'checked';}?> value="1" type="radio" name="hdmat">Có</label>
+      <label class="radio-inline"><input value="0" type="radio" name="hdmat">Không</label></div>
 </div>
 <div class="form-group">
-      <label> Báo cáo thuế</label>
+      <label class="control-label col-sm-4"> Tạm ngưng:</label>
+      <div class="col-sm-8">
       <label class="radio-inline"><input <?php 
-               if(($row["bct"])==1){echo ' checked="checked"';}?> value="1" type="radio" name="bct">Có</label>
-      <label class="radio-inline"><input value="0" type="radio" name="bct">Không</label>
+               if(($row["tamngung"])==1){echo 'checked';}?> value="1" type="radio" name="tamngung">Có</label>
+      <label class="radio-inline"><input value="0" type="radio" name="tamngung">Không</label></div>
 </div>
 <div class="form-group">
-      <label> Báo cáo tài chính</label>
+      <label class="control-label col-sm-4"> Thư tư vấn</label>
+      <div class="col-sm-8">
       <label class="radio-inline"><input <?php 
-               if(($row["bctc"])==1){echo ' checked="checked"';}?> value="1" type="radio" name="bctc">Có</label>
-      <label class="radio-inline"><input value="0" type="radio" name="bctc">Không</label>
+               if(($row["tuvan"])==1){echo 'checked';}?> value="1" type="radio" name="tuvan">Có</label>
+      <label class="radio-inline"><input value="0" type="radio" name="tuvan">Không</label></div>
 </div>
 <div class="form-group">
-      <label> Sai lỗi</label>
+      <label class="control-label col-sm-4"> In đóng chứng từ</label>
+      <div class="col-sm-8">
       <label class="radio-inline"><input <?php 
-               if(($row["sailoi"])==1){echo ' checked="checked"';}?> value="1" type="radio" name="sailoi">Có</label>
-      <label class="radio-inline"><input value="0" type="radio" name="sailoi">Không</label>
+               if(($row["indct"])==1){echo 'checked';}?> value="1" type="radio" name="indct">Có</label>
+      <label class="radio-inline"><input value="0" type="radio" name="indct">Không</label></div>
 </div>
 <div class="form-group">
-      <label> Hài lòng</label>
+     <label class="control-label col-sm-4"> Giao chứng từ</label>
+     <div class="col-sm-8">
       <label class="radio-inline"><input <?php 
-               if(($row["hailong"])==1){echo ' checked="checked"';}?> value="1" type="radio" name="hailong">Có</label>
-      <label class="radio-inline"><input value="0" type="radio" name="hailong">Không</label>
+               if(($row["giaoct"])==1){echo 'checked';}?> value="1" type="radio" name="giaoct">Có</label>
+      <label class="radio-inline"><input value="0" type="radio" name="giaoct">Không</label></div>
 </div>
 <div class="form-group">
-      <label> Ký tiếp</label>
+      <label class="control-label col-sm-4"> Báo cáo thuế</label>
+      <div class="col-sm-8">
       <label class="radio-inline"><input <?php 
-               if(($row["kytiep"])==1){echo ' checked="checked"';}?> value="1" type="radio" name="kytiep">Có</label>
-      <label class="radio-inline"><input value="0" type="radio" name="kytiep">Không</label>
+               if(($row["bct"])==1){echo 'checked';}?> value="1" type="radio" name="bct">Có</label>
+      <label class="radio-inline"><input value="0" type="radio" name="bct">Không</label></div>
 </div>
 <div class="form-group">
-      <label> Giới thiệu hợp động mới</label>
+      <label class="control-label col-sm-4"> Báo cáo tài chính</label>
+      <div class="col-sm-8">
       <label class="radio-inline"><input <?php 
-               if(($row["gthdmoi"])==1){echo ' checked="checked"';}?> value="1" type="radio" name="gthdmoi">Có</label>
-      <label class="radio-inline"><input value="0" type="radio" name="gthdmoi">Không</label>
+               if(($row["bctc"])==1){echo 'checked';}?> value="1" type="radio" name="bctc">Có</label>
+      <label class="radio-inline"><input value="0" type="radio" name="bctc">Không</label></div>
 </div>
 <div class="form-group">
-      <label> Dịch vụ khác</label>
+      <label class="control-label col-sm-4"> Sai lỗi</label>
+      <div class="col-sm-8">
       <label class="radio-inline"><input <?php 
-               if(($row["dvkhac"])==1){echo ' checked="checked"';}?> value="1" type="radio" name="dvkhac">Có</label>
-      <label class="radio-inline"><input value="0" type="radio" name="dvkhac">Không</label>
+               if(($row["sailoi"])==1){echo 'checked';}?> value="1" type="radio" name="sailoi">Có</label>
+      <label class="radio-inline"><input value="0" type="radio" name="sailoi">Không</label></div>
+</div>
+<div class="form-group">
+      <label class="control-label col-sm-4"> Hài lòng</label>
+      <div class="col-sm-8">
+      <label class="radio-inline"><input <?php 
+               if(($row["hailong"])==1){echo 'checked';}?> value="1" type="radio" name="hailong">Có</label>
+      <label class="radio-inline"><input value="0" type="radio" name="hailong">Không</label></div>
+</div>
+<div class="form-group">
+      <label class="control-label col-sm-4"> Ký tiếp</label>
+      <div class="col-sm-8">
+      <label class="radio-inline"><input <?php 
+               if(($row["kytiep"])==1){echo 'checked';}?> value="1" type="radio" name="kytiep">Có</label>
+      <label class="radio-inline"><input value="0" type="radio" name="kytiep">Không</label></div>
+</div>
+<div class="form-group">
+      <label class="control-label col-sm-4">Giới thiệu hợp động mới</label>
+      <div class="col-sm-8">
+      <label class="radio-inline"><input <?php 
+               if(($row["gthdmoi"])==1){echo 'checked';}?> value="1" type="radio" name="gthdmoi">Có</label>
+      <label class="radio-inline"><input value="0" type="radio" name="gthdmoi">Không</label></div>
+</div>
+<div class="form-group">
+      <label class="control-label col-sm-4"> Dịch vụ khác</label>
+      <div class="col-sm-8">
+      <label class="radio-inline"><input <?php 
+               if(($row["dvkhac"])==1){echo 'checked';}?> value="1" type="radio" name="dvkhac">Có</label>
+      <label class="radio-inline"><input value="0" type="radio" name="dvkhac">Không</label></div>
+</div>
+<div class="form-group">
+      <label class="control-label col-sm-4"> Ghi chú</label>
+      <div class="col-sm-8">
+      <textarea class="form-control" name="ghichu"><?php echo $row['ghichu'];?></textarea>
+      </div>
 </div></div>
 <div class="form-group">
 <button type="submit" name="edit" class="btn btn-success"><span class="glyphicon glyphicon-edit"></span> Lưu ngay</button>
@@ -203,136 +283,3 @@ if(isset($_POST["edit"])){
 </body>
 
 </html>
-<div id="dataModal" class="modal fade">  
-      <div class="modal-dialog">  
-           <div class="modal-content">  
-                <div class="modal-header">  
-                     <button type="button" class="close" data-dismiss="modal">&times;</button>  
-                     <h4 class="modal-title"> Form chi tiết</h4>  
-                </div>  
-                <div class="modal-body" id="dlkpi_chitiet">  
-                </div>  
-                <div class="modal-footer">
-                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>  
-                </div>  
-           </div>  
-      </div>  
- </div>
-  <div id="add_doanhthu_Modal" class="modal fade">  
-      <div class="modal-dialog">  
-           <div class="modal-content">  
-                <div class="modal-header">  
-                     <button type="button" class="close" data-dismiss="modal">&times;</button>  
-                     <h4 class="modal-title">Form đăng ký Doanh thu</h4>  
-                </div>  
-                <div class="modal-body">  
-                     <form method="post" id="insert_form_DT">
-                       	<input type="hidden" name="manv" value = "<?php echo $_SESSION['id_nv'];?>" class="form-control">
-                       	<input type="hidden" name="mapb" value = "<?php echo $_SESSION['pb'];?>" class="form-control">
-                       	<input type="hidden" name="manhom" value = "<?php echo $_SESSION['id_nh'];?>" class="form-control">
-                        <label>Khách hàng</label>
-                        <select name="makh" id="makh" class="form-control makpi"> 
-                           <option value="">Chọn Khách hàng</option> 
-                            <?php
-                            $id_nv = $_SESSION['id_nv'];
-                            $level = $_SESSION['level'];
-                            if(($level)==1){
-                            	$name=mysql_query("SELECT * from khachhang");
-                            }else{
-                            	$name=mysql_query("SELECT * from khachhang where id_nv = '$id_nv'");
-                            }
-							while($rown = mysql_fetch_array($name)){?>
-	   						 <option value="<?php echo $rown['makh']; ?>"><?php echo $rown['congty']; ?></option>
-						<?php }   
-                            ?>
-                          </select>  
-                          <br />  
-                          <label>Doanh thu</label>
-                          <input type="text" name="dthu" id="dthu" class="form-control">
-                          <br />  
-                          <label> Phải thu</label> 
-                          <input type="text" name="phaithu" id="phaithu" class="form-control">  
-                          <br />  
-                          <label> Đã thu</label>
-                          <input type="text" name="dathu" id="dathu" class="form-control"> 
-                          <br />  
-                          <input type="submit" name="insert" id="insert" value="Lưu ngay" class="btn btn-success" />  
-                     </form>  
-                </div>  
-                <div class="modal-footer">  
-                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>  
-                </div>  
-           </div>  
-      </div>  
- </div>
- <script>  
- $(document).ready(function(){  
- 	  $('#add_DT').click(function(){  
-           $('#insert_form_DT')[0].reset();  
-      		}); 
-      $('#insert_form_DT').on("submit", function(event){  
-           event.preventDefault();  
-           if($('#makh').val() == "")  
-           {  
-                alert("Bạn chưa nhập tên Khách hàng");  
-           }  
-           else if($('#dthu').val() == '')  
-           {  
-                alert("Bạn chưa nhập Doanh thu");  
-           }  
-           else if($('#phaithu').val() == '')  
-           {  
-                alert("Bạn chưa nhập phải thu");  
-           }  
-           else if($('#dathu').val() == '')  
-           {  
-                alert("Bạn chưa nhập đã thu ");  
-           }  
-           else  
-           {  
-                $.ajax({  
-                     url:"kpi/themdlkpi.php",  
-                     method:"POST",  
-                     data:$('#insert_form_DT').serialize(),  
-                     success:function(data){  
-                          $('#insert_form_DT')[0].reset();  
-                          $('#add_doanhthu_Modal').modal('hide');  
-                          $('#doanhthu_table').html(data);  
-                     }  
-                });  
-           }  
-      });      
-      $(".xemdlkpi").click(function(){
-			var id = $(this).attr('data-id');
-			$.post("kpi/xemdlkpi.php", {id: id}, function(data){
-				$("#dlkpi_chitiet").html(data);
-			})
-		})
-	  $('.xoadlkpi').click(function(){  
-           if(confirm("Bạn có chắc chắn là muốn Xóa dữ liệu này không?"))  
-           {  
-               var id = $(this).attr('data-id');
-                $.ajax({  
-                          url:'kpi/xoadlkpi.php',  
-                          method:'POST',  
-                          data:{id:id},  
-                          success:function()  
-                          { 
-                           $('tr#'+id+'').css('background-color', '#ccc');
-                           $('tr#'+id+'').fadeOut('slow');  
-                           location.reload();
-                          }  
-                     });  
-           }  
-           else  
-           {  
-                return false;  
-           }  
-      });
-	$('#nap_pilltab2').click(function(){  
-           location.reload();  
-      		});
-	$('[data-toggle="tooltip"]').tooltip(); 
-	
- });  
- </script> 

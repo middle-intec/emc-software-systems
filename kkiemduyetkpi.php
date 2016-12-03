@@ -32,7 +32,7 @@ require"lib/quanli.php";
 						<ul class="nav nav-tabs">
 							<li><a href="#tab1" data-toggle="tab">Công ty</a></li>
 							<li class="active"><a href="#tab2" data-toggle="tab">KPIs của tôi</a></li>
-							<li><a href="#tab3" data-toggle="tab">Phòng <?php
+							<li><a href="kpis_phong.php">Phòng <?php
 							$manv = $_SESSION["manv"];
 							$name=mysql_query("select * from nhanvien inner join phongban on nhanvien.pb = phongban.id_pb where manv = '$manv'");
 							while($rown = mysql_fetch_array($name)){
@@ -51,7 +51,7 @@ require"lib/quanli.php";
 							<div class="tab-pane fade in active" id="tab2">
 							<ul class="nav nav-pills">
 								<li><a href="kpis.php"> Đăng ký KPIs</a></li>
-								<li><a href="dangkydoanhthu.php">Đăng ký Doanh Thu</a></li>
+								<li><a href="dangkydoanhthu.php">Đăng ký Khách hàng</a></li>
 								<li class="active"><a href="#pilltab3" data-toggle="tab">Phê Duyệt KPIs </a></li>
 							</ul>
 		
@@ -66,7 +66,7 @@ require"lib/quanli.php";
                 <label for="email">Nhân viên:</label>
                 <select class="form-control" name="manv" style="width: 200px;">
 				<?php 
-				$name=mysql_query("select * from nhanvien");
+				$name=mysql_query("select * from nhanvien where id_nv <> 1");
 						while($rown = mysql_fetch_array($name)){?>
    						 <option value="<?php echo $rown['id_nv']; ?>"><?php echo $rown['ten']; ?></option>
 					<?php }

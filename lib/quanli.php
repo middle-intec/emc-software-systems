@@ -69,7 +69,7 @@ function suakhachhang($id_kh){
 			return mysql_fetch_array($row);
 }
 function nhanvien($start,$limit){
-	$qr = "SELECT * FROM nhanvien inner join phongban on nhanvien.pb = phongban.id_pb inner join level on nhanvien.level = level.id_level
+	$qr = "SELECT * FROM nhanvien inner join phongban on nhanvien.pb = phongban.id_pb inner join level on nhanvien.level = level.id_level inner join nhom on nhanvien.id_nh = nhom.id_nh 
 			order by id_nv desc
 			limit $start, $limit
 			";
@@ -126,6 +126,26 @@ function pheduyetkpi($manv,$thang,$nam,$idnv_sohuu){
 	$qr = "SELECT * from kqkpi inner join kpi on kqkpi.makpi = kpi.id_kpi
 			where manv = '$manv' and thang = '$thang' and nam ='$nam' and idnv_sohuu = '$idnv_sohuu'
 			order by id_kqkpi desc
+			";
+			return mysql_query($qr);
+}
+function xemkqkpi_thang($pb,$nh,$thang,$nam){
+	$qr = "SELECT kpi.makpi, if(kpi.dvt='%',avg(kqkpi.kq),sum(kqkpi.kq)) as kq, kqkpi.kpi, kpi.lcv, kpi.dvt, kpi.bc, kpi.trongso_p, kpi.mt_p, avg(kqkpi.kq) as kqbq, kqkpi.giaithich from kqkpi inner join kpi on kqkpi.makpi = kpi.id_kpi
+			where id_pb = '$pb' and thang = '$thang' and nam ='$nam' and id_nh = '$nh'
+			GROUP BY kqkpi.makpi
+			";
+			return mysql_query($qr);
+}
+function xemkqkpi_thang_ts($pb,$nh){
+	$qr = "SELECT sum(trongso_p) as totalts from kpi 
+			Where id_pb = '$pb' and id_nh = '$nh'
+			";
+			return mysql_query($qr);
+}
+function kpi_phong($fromdate,$todate){
+	$qr = "SELECT kpi.makpi, if(kpi.dvt='%',avg(kqkpi.kq),sum(kqkpi.kq)) as kq, kqkpi.kpi, kpi.lcv, kpi.dvt, kpi.bc, kpi.trongso_p, kpi.mt_p, avg(kqkpi.kq) as kqbq, kqkpi.giaithich from kqkpi inner join kpi on kqkpi.makpi = kpi.id_kpi
+			WHERE ngaytao BETWEEN '$fromdate' AND '$todate'
+			GROUP BY kqkpi.makpi
 			";
 			return mysql_query($qr);
 }

@@ -18,7 +18,7 @@ if(isset($_POST["edit"])){
       $makpi = $_POST["makpi"];  
       $makfs = $_POST["makfs"];  
       $tenkpi = $_POST["tenkpi"]; 
-      $dvt = $_POST["dvt"];  
+      $dvt = $_POST["dvt"]; 
       $bc = $_POST["bc"];
       $trongso = $_POST["trongso"];
       $mt = $_POST["mt"];
@@ -93,6 +93,12 @@ if(isset($_POST["edit"])){
 	   					<input class="form-control" name ="mt"  value="<?php echo $row_suakpi ["mt"]?>" type="text">
 	   					</div>
 	   					<div class="form-group">	
+	   					<label for="email"> Giải thích:</label>
+	   					<textarea class="form-control" name ="chuthich"><?php echo $row_suakpi ["chuthich"]?></textarea>
+	   					</div>
+					</div>
+	   				<div class="col-sm-6">
+	   					<div class="form-group">	
 	   					<label for="email"> Phòng ban:</label>
 						<select class="form-control" name="id_pb"> 
 					<?php 
@@ -103,8 +109,6 @@ if(isset($_POST["edit"])){
 					?>
 	   					</select>
 	   					</div>
-					</div>
-	   				<div class="col-sm-6">
 	   					<div class="form-group">	
 	   					<label for="email"> Nhóm:</label>
 						<select class="form-control" name="id_nh"> 
@@ -147,10 +151,6 @@ if(isset($_POST["edit"])){
 							<?php }
 						?>
 	   					</select>
-	   					</div>
-	   					<div class="form-group">	
-	   					<label for="email"> Giải thích:</label>
-	   					<textarea class="form-control" name ="chuthich"><?php echo $row_suakpi ["chuthich"]?></textarea>
 	   					</div>
 					</div>						
 	            <div class="form-group">

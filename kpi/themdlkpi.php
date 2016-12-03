@@ -5,7 +5,7 @@ require"../lib/quanli.php";
  ?> 
 <?php
   $manv = $_SESSION["id_nv"];
-  $result = mysql_query(" SELECT count(id_dlkpi) as total, sum(dthu) as dthu from dlkpi where manv = '$manv'");
+  $result = mysql_query(" SELECT count(id_dlkpi) as total, sum(tamtinh) as dthu from dlkpi where manv = '$manv'");
   $row = mysql_fetch_assoc($result);
   $total_kpi = number_format($row['total']);
   $total_dthu = number_format($row['dthu'],2);
@@ -18,16 +18,18 @@ require"../lib/quanli.php";
       $mapb = $_POST['mapb'];
       $manhom = $_POST['manhom'];
       $makh = $_POST["makh"];  
-      $dthu = $_POST["dthu"];  
+      $tamtinh = $_POST["tamtinh"];  
       $phaithu = $_POST["phaithu"];  
-      $dathu = $_POST["dathu"];
+      $damnhan = $_POST["damnhan"];
+      $nodk = $_POST["nodk"];
+      $thucthu = $_POST["thucthu"];
       date_default_timezone_set('Asia/Ho_Chi_Minh');
       $ngaytao = date("Y-m-d H:i:s");
       $thang = date("m");
       $nam = date("Y"); 
       $query = "  
       INSERT INTO dlkpi
-      VALUES(null, '$makh', '$manv', '$mapb', '$manhom', '$dthu', '$phaithu', '$dathu', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '$ngaytao', '$thang', '$nam');  
+      VALUES(null, '$makh', '$manv', '$mapb', '$manhom', '$tamtinh', '$phaithu', '$damnhan', '$nodk', '$thucthu', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '$ngaytao', 'Ghi chú', '$thang', '$nam');  
       ";  
       if(mysql_query($query))  
       {  
@@ -42,18 +44,18 @@ require"../lib/quanli.php";
                   <th>STT</th>
                   <th>Mã KH</th>
                   <th>Khách hàng</th>
-                  <th>DT</th>
+                  <th>TTính</th>
                   <th>PThu</th>
-                  <th>Đthu</th>
+                  <th>%đảm nhận</th>
+                  <th>Nợ ĐK</th>
+                  <th>Thực thu</th>
                   <th>Tư vấn</th>
                   <th>INDCT</th>
                   <th>GIAOCT</th>
-                  <th>BCT</th>
-                  <th>BCTC</th>
                   <th>PT</th>
                   <th>TP</th>
-                <th>KSNB</th>
-                <th>TGĐ</th>
+                  <th>KSNB</th>
+                  <th>TGĐ</th>
                   <th width="85px">Chức năng</th>
                 </tr>
                 </thead>
@@ -71,11 +73,11 @@ require"../lib/quanli.php";
                     <td>'.$stt.'</td>
                     <td>'.$row_xemdoanhthu['makh'].'</td>
                     <td>'.$row_xemdoanhthu['congty'].'</td>
-                  <td>'.$row_xemdoanhthu['dthu'].'</td>
-                  <td>'.$row_xemdoanhthu['phaithu'].'</td>
-                  <td>'.$row_xemdoanhthu['dathu'].'</td>
-                    <td><input type="checkbox"</td>
-                    <td><input type="checkbox"/></td>
+                    <td>'.$row_xemdoanhthu['tamtinh'].'</td>
+                    <td>'.$row_xemdoanhthu['phaithu'].'</td>
+                    <td>'.$row_xemdoanhthu['damnhan'].'</td>
+                    <td>'.$row_xemdoanhthu['nodk'].'</td>
+                    <td>'.$row_xemdoanhthu['thucthu'].'</td>
                     <td><input type="checkbox"/></td>
                     <td><input type="checkbox"/></td>
                     <td><input type="checkbox"/></td>

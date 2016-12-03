@@ -24,6 +24,26 @@ require"lib/quanli.php";
 		mysql_query($qr);
 		header("location: nhanvien.php");
 	}}
+if(isset($_POST["addroom"])){
+	if(empty($_POST["mapb"])&empty($_POST["phongban"])){
+	echo '<script type="text/javascript">alert("Bạn phải nhập đầy đủ thông tin");</script>';
+	}else{
+		$mapb = $_POST["mapb"];
+		$phongban = $_POST["phongban"];
+		$qr = "insert into phongban values (null,'$mapb','$phongban')";
+		mysql_query($qr);
+		header("location: nhanvien.php");
+	}}	
+if(isset($_POST["addgrp"])){
+	if(empty($_POST["nhom"])&empty($_POST["id_pb"])){
+	echo '<script type="text/javascript">alert("Bạn phải nhập đầy đủ thông tin");</script>';
+	}else{
+		$nhom = $_POST["nhom"];
+		$id_pb = $_POST["id_pb"];
+		$qr = "insert into nhom values (null,'$nhom','$id_pb')";
+		mysql_query($qr);
+		header("location: nhanvien.php");
+	}}	
 ?>
 
 
@@ -50,25 +70,30 @@ require"lib/quanli.php";
 					<div class="panel-heading dark-overlay"><svg class="glyph stroked clipboard-with-paper"><use xlink:href="#stroked-clipboard-with-paper"></use></svg>Phòng ban</div>
 					<div class="panel-body">
 						<ul class="todo-list">
+						<?php 
+						$name=mysql_query("select * from phongban");
+						while($rown = mysql_fetch_array($name)){?>
 						<li class="todo-list-item">
 								<div class="checkbox">
-									<label for="checkbox">Admin</label>
-									<label for="checkbox">Tổng Giám Đốc</label>
+									<label for="checkbox"><?php echo $rown['mapb']; ?></label>
+									<label for="checkbox"><?php echo $rown['phongban']; ?></label>
 								</div>
 								<div class="pull-right action-buttons">
 									<a href="#"><svg class="glyph stroked pencil"><use xlink:href="#stroked-pencil"></use></svg></a>
 									<a href="#" class="trash"><svg class="glyph stroked trash"><use xlink:href="#stroked-trash"></use></svg></a>
 								</div>
 						</li>
+						<?php }
+						 ?>
 						</ul>
 					</div>
 					<div class="panel-footer">
-						<form class="form-inline">
+						<form class="form-inline" action="" method="POST">
 							<div class="form-group">
-							<input style="width: 30%;" type="text" name = "mapb" class="form-control input-md" placeholder="Mã phòng" />
-							<input style="width: 67%;" type="text" name = "phongban" class="form-control input-md" placeholder="Nhập tên phòng" /></div>
+							<input style="width: 30%;" type="text" name ="mapb" class="form-control input-md" placeholder="Mã phòng" />
+							<input style="width: 67%;" type="text" name ="phongban" class="form-control input-md" placeholder="Nhập tên phòng" /></div>
 							<div class="form-group">
-							<button class="btn btn-primary btn-md" id="btn-todo"> Thêm phòng</button>
+							<button type="submit" class="btn btn-primary btn-md" id="btn-todo" name="addroom"> Thêm phòng</button>
 							</div>
 						</form>
 					</div>
@@ -79,25 +104,36 @@ require"lib/quanli.php";
 					<div class="panel-heading dark-overlay"><svg class="glyph stroked clipboard-with-paper"><use xlink:href="#stroked-clipboard-with-paper"></use></svg> Nhóm của phòng </div>
 					<div class="panel-body">
 						<ul class="todo-list">
+						<?php 
+						$name=mysql_query("select * from nhom inner join phongban on nhom.id_pb = phongban.id_pb");
+						while($rown = mysql_fetch_array($name)){?>
 						<li class="todo-list-item">
 								<div class="checkbox">
-									<label for="checkbox">Nhóm 01</label>
-									<label for="checkbox">Tổng Giám Đốc</label>
+									<label for="checkbox"><?php echo $rown['tennhom']; ?></label>
+									<label for="checkbox"><?php echo $rown['phongban']; ?></label>
 								</div>
 								<div class="pull-right action-buttons">
 									<a href="#"><svg class="glyph stroked pencil"><use xlink:href="#stroked-pencil"></use></svg></a>
 									<a href="#" class="trash"><svg class="glyph stroked trash"><use xlink:href="#stroked-trash"></use></svg></a>
 								</div>
 							</li>
+						<?php }
+						 ?>
 						</ul>
 					</div>
 					<div class="panel-footer">
-						<form class="form-inline">
+						<form class="form-inline" action="" method="POST">
 							<div class="form-group">
-							<input style="width: 67%;" type="text" name = "nhom" class="form-control input-md" placeholder= "Tên Nhóm" />
-							<input style="width: 30%;" type="text" name = "id_pb" class="form-control input-md" placeholder="ID phòng" /></div>
-							<div class="form-group">
-							<button class="btn btn-primary btn-md" id="btn-todo"> Thêm nhóm </button>
+							<input style="width: 45%;" type="text" name = "nhom" class="form-control input-md" placeholder="Tên Nhóm" />
+							<select style="width: 30%;" name = "id_pb" class="form-control input-md">
+							<?php 
+						$name=mysql_query("select * from phongban");
+						while($rown = mysql_fetch_array($name)){?>
+	   					<option value="<?php echo $rown['id_pb']; ?>"><?php echo $rown['phongban']; ?></option>
+						<?php }
+						 	?>
+							</select>
+							<button class="btn btn-primary btn-md" id="btn-todo" name="addgrp"> Thêm nhóm </button>
 							</div>
 						</form>
 					</div>
@@ -215,21 +251,7 @@ require"lib/quanli.php";
 					  		<td>{manv}</td>
 					  		<td>{ten}</td>
 					  		<td>{pb}</td>
-					  		<td><?php
-								$nhom = $row_nhanvien ["id_nh"];
-								if(($nhom)==2){
-									echo ' Nhóm 01 ';
-								}elseif (($nhom)==3) {
-									echo ' Nhóm 02';
-								}elseif (($nhom)==4){
-									echo ' Nhóm sales ';
-								}elseif (($nhom)==5){
-									echo ' Nhóm CSKH ';
-								}else{
-									echo 'Không có nhóm';
-								}
-							?>
-					  		</td>
+					  		<td>{nhom}</td>
 					  		<td>{level}</td>
 							<td><div class="btn-group">
 							<a class="btn btn-primary btn-sm" href="suanhanvien.php?id_nv={id_nv}">Sửa</a>
@@ -242,6 +264,7 @@ require"lib/quanli.php";
 						$s = str_replace("{manv}", $row_nhanvien ["manv"], $s);
 						$s = str_replace("{ten}", $row_nhanvien ["ten"], $s);
 						$s = str_replace("{pb}", $row_nhanvien ["phongban"], $s);
+						$s = str_replace("{nhom}", $row_nhanvien ["tennhom"], $s);
 						$s = str_replace("{level}", $row_nhanvien ["level"], $s);
 						echo $s; 
 						}

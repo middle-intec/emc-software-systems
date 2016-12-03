@@ -69,7 +69,7 @@ function suakhachhang($id_kh){
 			return mysql_fetch_array($row);
 }
 function nhanvien($start,$limit){
-	$qr = "SELECT * FROM nhanvien inner join phongban on nhanvien.pb = phongban.id_pb inner join level on nhanvien.level = level.id_level
+	$qr = "SELECT * FROM nhanvien inner join phongban on nhanvien.pb = phongban.id_pb inner join level on nhanvien.level = level.id_level inner join nhom on nhanvien.id_nh = nhom.id_nh
 			order by id_nv desc
 			limit $start, $limit
 			";

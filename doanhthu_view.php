@@ -8,11 +8,72 @@ require"lib/quanli.php";
 	header("location: index.php");}
 ?>
 <?php
-	$manv = $_GET['manv'];	
-	$result = mysql_query(" SELECT count(id_dlkpi) as total, sum(dthu) as dthu from dlkpi where manv = '$manv'");
+	$manv = $_GET["manv"];
+	$thang = $_GET['thang'];
+	$nam = $_GET['nam'];
+	$result = mysql_query(" SELECT count(id_kh) as totalKH from khachhang where id_nv = '$manv'");
+	$rowKH = mysql_fetch_assoc($result);
+	$totalKH = $rowKH['totalKH'];
+	$result = mysql_query(" SELECT count(id_dlkpi) as total, sum(tamtinh) as dthu, sum(phaithu) as phaithu, sum(damnhan) as dathu, sum(tuvan) as tuvan, sum(indct) as indct, sum(giaoct) as giaoct, sum(bct) as bct, sum(bctc) as bctc, sum(sailoi) as sailoi, sum(hailong) as hailong, sum(kytiep) as kytiep, sum(gthdmoi) as gthdmoi, sum(dvkhac) as dvkhac from dlkpi where manv = '$manv' and thang = '$thang' and nam = '$nam'");
 	$row = mysql_fetch_assoc($result);
-	$total_kpi = $row['total'];
+	if($totalKH > 0){
+	$total_kpi = number_format($row['total']);
 	$total_dthu = number_format($row['dthu'],2);
+	$total_dathu = round((($row['dathu']/$row['dthu'])*100),2);
+	$total_phaithu = number_format($row['phaithu'],2);
+	$total_tuvan = round((($row['tuvan']/$totalKH)*100),2);
+	$total_indct = round((($row['indct']/$totalKH)*100),2);
+	$total_giaoct = round((($row['giaoct']/$totalKH)*100),2);
+	$total_bct = number_format($row['bct']);
+	$total_bctc = number_format($row['bctc']);
+	$total_sailoi = round((100-((($row['sailoi'])/($totalKH*0.3))*100)),2);
+	$total_hailong = round((($row['hailong']/$totalKH)*100),2);
+	$total_kytiep = round((($row['kytiep']/$totalKH)*100),2);
+	$total_gthdmoi = number_format($row['gthdmoi']);
+	$total_dvkhac = number_format($row['dvkhac']);
+}else{
+	$total_kpi = number_format($row['total']);
+	$total_dthu = number_format($row['dthu'],2);
+	$total_dathu = number_format($row['dathu'],2);
+	$total_phaithu = number_format($row['phaithu'],2);
+	$total_tuvan = number_format($row['tuvan']);
+	$total_indct = number_format($row['indct']);
+	$total_giaoct = number_format($row['giaoct']);
+	$total_bct = number_format($row['bct']);
+	$total_bctc = number_format($row['bctc']);
+	$total_sailoi = number_format($row['sailoi']);
+	$total_hailong = number_format($row['hailong']);
+	$total_kytiep = number_format($row['kytiep']);
+	$total_gthdmoi = number_format($row['gthdmoi']);
+	$total_dvkhac = number_format($row['dvkhac']);
+}
+	if(isset($_POST['dt'])){
+		$_SESSION["dt"] = $row['dthu'];
+	}
+	if(isset($_POST['kytiep'])){
+		$_SESSION["kytiep"] = $total_kytiep;
+	}
+	if(isset($_POST['gthdmoi'])){
+		$_SESSION["gthdmoi"] = $total_gthdmoi;
+	}
+	if(isset($_POST['sailoi'])){
+		$_SESSION["sailoi"] = $total_sailoi;
+	}
+	if(isset($_POST['indct'])){
+		$_SESSION["indct"] = $total_indct;
+	}
+	if(isset($_POST['thutien'])){
+		$_SESSION["thutien"] = $total_dathu;
+	}
+	if(isset($_POST['giaoct'])){
+		$_SESSION["giaoct"] = $total_giaoct;
+	}
+	if(isset($_POST['tuvan'])){
+		$_SESSION["tuvan"] = $total_tuvan;
+	}
+	if(isset($_POST['hailong'])){
+		$_SESSION["hailong"] = $total_hailong;
+	}
 ?>
 <!DOCTYPE html>
 <html>
@@ -39,7 +100,7 @@ require"lib/quanli.php";
 						<ul class="nav nav-tabs">
 							<li><a href="#tab1" data-toggle="tab">Công ty</a></li>
 							<li class="active"><a href="#tab2" data-toggle="tab">KPIs của tôi</a></li>
-							<li><a href="#tab3" data-toggle="tab">Phòng <?php
+							<li><a href="kpis_phong.php">Phòng <?php
 							$manv = $_SESSION["manv"];
 							$name=mysql_query("select * from nhanvien inner join phongban on nhanvien.pb = phongban.id_pb where manv = '$manv'");
 							while($rown = mysql_fetch_array($name)){
@@ -57,8 +118,11 @@ require"lib/quanli.php";
 							</div>
 							<div class="tab-pane fade in active" id="tab2">
 							<ul class="nav nav-pills">
-								<li><a href="kpis.php"> Đăng ký KPIs</a></li>
-								<li class="active"><a href="#pilltab2" data-toggle="tab"> Đăng ký Doanh Thu</a></li>
+							<li><a href="kpis.php"> Đăng ký KPIs</a></li>
+							<li class="active"><a href="#pilltab2" data-toggle="tab"> Đăng ký Khách hàng</a><?php
+								if(($_SESSION['level'])!=3){
+									echo '<li><a href="kiemduyetdoanhthu.php">Duyệt Khách hàng</a></li>';
+								}?>
 							</ul>
 		
 						<div class="tab-content">
@@ -68,7 +132,7 @@ require"lib/quanli.php";
 						<div class="form-group" align="right">
 						<a href="dangkydoanhthu.php" class="btn btn-danger"><span class="glyphicon glyphicon-arrow-left"></span> Trở về</a>
 						<button type="button" id="nap_pilltab2" class="btn btn-info"><span class="glyphicon glyphicon-refresh"></span> Nạp lại</button>  
-                          <button type="button" name="add_DT" id="add_DT" data-toggle="modal" data-target="#add_doanhthu_Modal" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Đăng ký Doanh thu</button>  
+                        <button type="button" name="add_DT" id="add_DT" data-toggle="modal" data-target="#add_doanhthu_Modal" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Đăng ký Khách hàng</button>  
                     	 </div>
                     	 <div id="doanhthu_table">
 			               <table class="table table-bordered">
@@ -77,14 +141,14 @@ require"lib/quanli.php";
 						  		<th>STT</th>
 						  		<th>Mã KH</th>
 						  		<th>Khách hàng</th>
-						  		<th>DT</th>
+						  		<th>TTính</th>
 						  		<th>PThu</th>
-						  		<th>Đthu</th>
+						  		<th>%đảm nhận</th>
+						  		<th>Nợ ĐK</th>
+						  		<th>Thực thu</th>
 						  		<th>Tư vấn</th>
 						  		<th>INDCT</th>
 						  		<th>GIAOCT</th>
-						  		<th>BCT</th>
-						  		<th>BCTC</th>
 						  		<th>PT</th>
 						  		<th>TP</th>
 								<th>KSNB</th>
@@ -107,27 +171,25 @@ require"lib/quanli.php";
 			        			<td><?php echo $stt;?></td>
 			        			<td>{makh}</td>
 			        			<td>{congty}</td>
-						  		<td>{dthu}</td>
+						  		<td>{damnhan}</td>
 						  		<td>{phaithu}</td>
-						  		<td>{dathu}</td>
+						  		<td>{damnhan}%</td>
+						  		<td>{nodk}</td>
+						  		<td>{thucthu}</td>
 			        			<td><input disabled type="checkbox" <?php 
-			         if(($row_xemdoanhthu["tuvan"])==1){echo ' checked="checked"';}?>/></td>
+			         if(($row_xemdoanhthu["tuvan"])==1){echo 'checked';}?>/></td>
 			        			<td><input disabled type="checkbox"<?php 
-			         if(($row_xemdoanhthu["indct"])==1){echo ' checked="checked"';}?>/></td>
+			         if(($row_xemdoanhthu["indct"])==1){echo 'checked';}?>/></td>
 			        			<td><input disabled type="checkbox"<?php 
-			         if(($row_xemdoanhthu["giaoct"])==1){echo ' checked="checked"';}?>/></td>
+			         if(($row_xemdoanhthu["giaoct"])==1){echo 'checked';}?>/></td>
 			        			<td><input disabled type="checkbox"<?php 
-			         if(($row_xemdoanhthu["bct"])==1){echo ' checked="checked"';}?>/></td>
+			         if(($row_xemdoanhthu["pt"])==1){echo 'checked';}?>/></td>
 			        			<td><input disabled type="checkbox"<?php 
-			         if(($row_xemdoanhthu["bctc"])==1){echo ' checked="checked"';}?>/></td>
-			        			<td><input type="checkbox"<?php 
-			         if(($row_xemdoanhthu["pt"])==1){echo ' checked="checked"';}?>/></td>
-			        			<td><input type="checkbox"<?php 
-			         if(($row_xemdoanhthu["tp"])==1){echo ' checked="checked"';}?>/></td>
-			        			<td><input type="checkbox"<?php 
-			         if(($row_xemdoanhthu["ksnb"])==1){echo ' checked="checked"';}?>/></td>
-			        			<td><input type="checkbox"<?php 
-			         if(($row_xemdoanhthu["tgd"])==1){echo ' checked="checked"';}?>/></td>
+			         if(($row_xemdoanhthu["tp"])==1){echo 'checked';}?>/></td>
+			        			<td><input disabled type="checkbox"<?php 
+			         if(($row_xemdoanhthu["ksnb"])==1){echo 'checked';}?>/></td>
+			        			<td><input disabled type="checkbox"<?php 
+			         if(($row_xemdoanhthu["tgd"])==1){echo 'checked';}?>/></td>
 			        			<td width="85px">
 								 <div class="btn-group">
 								  <button type="button" data-toggle="modal" data-target="#dataModal" data-id="{id_dlkpi}" class="btn btn-primary btn-xs xemdlkpi">Xem</button>
@@ -135,8 +197,23 @@ require"lib/quanli.php";
 								    <span class="caret"></span>
 								  </button>
 								  <ul class="dropdown-menu" role="menu">
-								    <li><a class="btn btn-default btn-xs" href="doanhthu_edit.php?id_dlkpi={id_dlkpi}">Sửa</a></li>
-								    <li><a class="btn btn-default btn-xs xoadlkpi" data-id="{id_dlkpi}">Xóa</a></li>
+								  <?php
+								  $level = $_SESSION["level"];
+					if((($row_xemdoanhthu["ksnb"])==1)&($level>=2)){
+						echo '<li align="center">
+			  			<span>Hết hạn Sửa hoặc Xóa </span>
+	                	</li>';
+					}elseif((($row_xemdoanhthu["tp"])==1)&($level>=3)){
+						echo '<li align="center">
+			  			<span>Hết hạn Sửa hoặc Xóa </span>
+	                	</li>';
+					}else{
+						echo '
+					<li><a class="btn btn-default btn-xs" href="doanhthu_edit.php?id_dlkpi={id_dlkpi}">Sửa</a></li>
+					<li><a class="btn btn-default btn-xs xoadlkpi" data-id="{id_dlkpi}">Xóa</a></li>
+						';
+					}
+								  ?>
 								  </ul>
 								</div>			
 			                	</td>
@@ -146,9 +223,11 @@ require"lib/quanli.php";
 				$s = str_replace("{id_dlkpi}", $row_xemdoanhthu["id_dlkpi"], $s);
 				$s = str_replace("{makh}", $row_xemdoanhthu["makh"], $s);
 				$s = str_replace("{congty}", $row_xemdoanhthu["congty"], $s);
-				$s = str_replace("{dthu}", $row_xemdoanhthu["dthu"], $s);
-				$s = str_replace("{phaithu}", $row_xemdoanhthu["phaithu"], $s);
-				$s = str_replace("{dathu}", $row_xemdoanhthu["dathu"], $s);
+				$s = str_replace("{tamtinh}", number_format($row_xemdoanhthu["tamtinh"],0,'.',','), $s);
+				$s = str_replace("{phaithu}", number_format($row_xemdoanhthu["phaithu"],0,'.',','), $s);
+				$s = str_replace("{damnhan}", number_format($row_xemdoanhthu["damnhan"],0,'.',','), $s);
+				$s = str_replace("{nodk}", round($row_xemdoanhthu["nodk"],2), $s);
+				$s = str_replace("{thucthu}", round($row_xemdoanhthu["thucthu"],2), $s);
 				$s = str_replace("{tuvan}", $row_xemdoanhthu["tuvan"], $s);
 				$s = str_replace("{indct}", $row_xemdoanhthu["indct"], $s);
 				$s = str_replace("{giaoct}", $row_xemdoanhthu["giaoct"], $s);
@@ -169,47 +248,60 @@ require"lib/quanli.php";
 							</tbody>
 						   </table>
 						<div class="panel panel-default">
-						   	<div class="col-sm-2"> 
+						<div class="panel-heading">
+						<form method="POST" action="">
+						<button type="submit" name = "dt" class="btn btn-link">Lưu DT(F04)</button><button type="submit" name = "kytiep" class="btn btn-link">Lưu Ký tiếp(C03)</button><button type="submit" name = "gthdmoi" class="btn btn-link">Lưu GTHĐ mới(P01)</button><button type="submit" name = "sailoi" class="btn btn-link">Lưu Sai lỗi(P05-12)</button><button type="submit" name = "indct" class="btn btn-link">Lưu In ĐCT(P05-3)</button><button type="submit" name = "thutien" class="btn btn-link">Lưu HT Thu tiền(P05-4)</button><button type="submit" name = "giaoct" class="btn btn-link">Lưu Giao CT(P05-5)</button><button type="submit" name = "tuvan" class="btn btn-link">Lưu Tư vấn(P09)</button><button type="submit" name = "hailong" class="btn btn-link">Lưu Hài lòng (C02)</button>
+						</form></div>
+						<div class="panel-body">
+						<div class="col-sm-4">
 						   	<div class="form-group">
-		  						<label> Tổng KH: <?php echo $total_kpi;?></label>
-						   	</div></div>
-							<div class="col-sm-1"> 
-							<div class="form-group">
-		  						<label> Doanh thu: <?php echo $total_dthu;?></label>
-						   	</div></div>
-						   	<div class="col-sm-1"> 
-						   	<div class="form-group">
-		  						<label> Phải thu: <?php ?></label>
-						   	</div></div>
-						   	<div class="col-sm-1"> 
-						   	<div class="form-group">
-		  						<label> Đã thu: <?php ?></label>
-						   	</div></div>
-						   	<div class="col-sm-2"> 
-						   	<div class="form-group">
-		  						<label></label>
-						   	</div></div>
-						   	<div class="col-sm-1"> 
-						   	<div class="form-group">
-		  						<label></label>
-						   	</div></div>
-						   	<div class="col-sm-1"> 
-						   	<div class="form-group">
-		  						<label></label>
-						   	</div></div>
-						   	<div class="col-sm-1"> 
-						   	<div class="form-group">
-		  						<label></label>
-						   	</div></div>
-						   	<div class="col-sm-1"> 
-						   	<div class="form-group">
-		  						<label></label>
-						   	</div></div>
-						   	<div class="col-sm-1"> 
-						   	<div class="form-group">
-		  						<label></label>
-						   	</div></div>
+		  						<label> Tổng KH: <?php echo $total_kpi;?>/<?php echo $totalKH;?></label>
 						   	</div>
+							<div class="form-group">
+		  						<label> Tạm tính: <?php echo $total_dthu;?></label>
+						   	</div>
+						   	<div class="form-group">
+		  						<label> Phải thu: <?php echo $total_phaithu; ?></label>
+						   	</div> 
+						   	<div class="form-group">
+		  						<label> %đảm nhận: <?php echo $total_dathu; ?>%</label>
+						   	</div>
+						   	<div class="form-group">
+		  						<label>GTHD mới: <?php echo $total_gthdmoi; ?></label>
+						   	</div>
+						</div>
+						<div class="col-sm-4">
+						   	<div class="form-group">
+		  						<label>Tư vấn: <?php echo $total_tuvan;?>%</label>
+						   	</div>
+						   	<div class="form-group">
+		  						<label>In ĐCT: <?php echo $total_indct; ?>%</label>
+						   	</div>
+						   	<div class="form-group">
+		  						<label>Giao CT: <?php echo $total_giaoct; ?>%</label>
+						   	</div>
+						   	<div class="form-group">
+		  						<label>BCT: <?php echo $total_bct; ?>/<?php echo $totalKH;?></label>
+						   	</div>
+						   	<div class="form-group">
+		  						<label>D.vụ khác: <?php echo $total_dvkhac; ?>/<?php echo $totalKH;?></label>
+						   	</div>
+						</div>
+						<div class="col-sm-4">
+						   	<div class="form-group">
+		  						<label>BCTC: <?php echo $total_bctc; ?>/<?php echo $totalKH;?></label>
+						   	</div>
+						   	<div class="form-group">
+		  						<label>Sai lỗi: <?php echo $total_sailoi; ?>%</label>
+						   	</div>
+						   	<div class="form-group">
+		  						<label>Hài lòng: <?php echo $total_hailong; ?>%</label>
+						   	</div>
+						   	<div class="form-group">
+		  						<label>Ký tiếp: <?php echo $total_kytiep; ?>%</label>
+						   	</div>
+						</div>
+						   	</div></div>
 						   </div>
 						</div>
 
@@ -280,15 +372,21 @@ require"lib/quanli.php";
                             ?>
                           </select>  
                           <br />  
-                          <label>Doanh thu</label>
-                          <input type="text" name="dthu" id="dthu" class="form-control">
+                          <label> Tạm tính</label>
+                          <input type="text" name="tamtinh" id="dthu" class="form-control">
                           <br />  
                           <label> Phải thu</label> 
                           <input type="text" name="phaithu" id="phaithu" class="form-control">  
                           <br />  
-                          <label> Đã thu</label>
-                          <input type="text" name="dathu" id="dathu" class="form-control"> 
+                          <label> %đảm nhận</label>
+                          <input type="text" name="damnhan" id="dathu" class="form-control"> 
                           <br />  
+                          <label> Nợ ĐK</label>
+                          <input type="text" name="nodk" id="dathu" class="form-control"> 
+                          <br /> 
+                          <label> Thực thu</label>
+                          <input type="text" name="thucthu" id="dathu" class="form-control"> 
+                          <br /> 
                           <input type="submit" name="insert" id="insert" value="Lưu ngay" class="btn btn-success" />  
                      </form>  
                 </div>  
@@ -311,7 +409,7 @@ require"lib/quanli.php";
            }  
            else if($('#dthu').val() == '')  
            {  
-                alert("Bạn chhangfdthuDoanh thu");  
+                alert("Bạn chưa Tạm tính");  
            }  
            else if($('#phaithu').val() == '')  
            {  
@@ -319,7 +417,7 @@ require"lib/quanli.php";
            }  
            else if($('#dathu').val() == '')  
            {  
-                alert("Bạn chưa nhập đã thu ");  
+                alert("Bạn chưa nhập % đảm nhận ");  
            }  
            else  
            {  

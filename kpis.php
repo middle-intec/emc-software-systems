@@ -8,21 +8,23 @@ require"lib/quanli.php";
 	header("location: index.php");}
 ?>
 <?php
-	$manv = $_SESSION["id_nv"];
-	$result = mysql_query(" SELECT count(id_kqkpi) as total, sum(trongso) as ts from kqkpi where manv = '$manv'");
+	$manv = $_SESSION["id_nv"];	
+	$thang = date("m");
+	$nam = date("Y");
+	$result = mysql_query(" SELECT count(id_kqkpi) as total, sum(trongso) as ts from kqkpi where manv = '$manv' and thang = '$thang' and nam = '$nam'");
 	$row = mysql_fetch_assoc($result);
 	$total_kpi = $row['total'];
 	$total_trongso = $row['ts'];
-	$result_ts = mysql_query(" SELECT sum(if(lcv='A',trongso,0)) as ts_a, sum(if(lcv='B',trongso,0)) as ts_b, sum((kq/mt)*trongso) as tylets, sum(if(lcv='A',trongso*(kq/mt),0)) as tylets_a, sum(if(lcv='B',trongso*(kq/mt),0)) as tylets_b, sum(((kq/mt)*trongso)*(pt)) as total_pt, sum(((kq/mt)*trongso)*(tl)) as total_tl, sum(((kq/mt)*trongso)*(tgd)) as total_tgd from kqkpi where manv = '$manv'");
+	$result_ts = mysql_query(" SELECT sum(if(lcv='A',trongso,0)) as ts_a, sum(if(lcv='B',trongso,0)) as ts_b, sum((kq/mt)*trongso) as tylets, sum(if(lcv='A',trongso*(kq/mt),0)) as tylets_a, sum(if(lcv='B',trongso*(kq/mt),0)) as tylets_b, sum(((kq/mt)*trongso)*(pt)) as total_pt, sum(((kq/mt)*trongso)*(tl)) as total_tl, sum(((kq/mt)*trongso)*(tgd)) as total_tgd from kqkpi where manv = '$manv' and thang = '$thang' and nam = '$nam'");
 	$row_ts = mysql_fetch_assoc($result_ts);
-	$total_trongsoA = $row_ts['ts_a'];
-	$total_trongsoB = $row_ts['ts_b'];
-	$total_tlhtkpi = $row_ts['tylets'];
-	$total_tylets_a = $row_ts['tylets_a'];
-	$total_tylets_b = $row_ts['tylets_b'];
-	$total_pt = $row_ts['total_pt'];
-	$total_tl = $row_ts['total_tl'];
-	$total_tgd = $row_ts['total_tgd'];
+	$total_trongsoA = number_format($row_ts['ts_a']);
+	$total_trongsoB = number_format($row_ts['ts_b']);
+	$total_tlhtkpi = number_format($row_ts['tylets'],2);
+	$total_tylets_a = number_format($row_ts['tylets_a'],2);
+	$total_tylets_b = number_format($row_ts['tylets_b'],2);
+	$total_pt = number_format($row_ts['total_pt'],2);
+	$total_tl = number_format($row_ts['total_tl'],2);
+	$total_tgd = number_format($row_ts['total_tgd'],2);
 
 ?>
 <!DOCTYPE html>
@@ -50,7 +52,7 @@ require"lib/quanli.php";
 						<ul class="nav nav-tabs">
 							<li><a href="#tab1" data-toggle="tab">Công ty</a></li>
 							<li class="active"><a href="#tab2" data-toggle="tab">KPIs của tôi</a></li>
-							<li><a href="#tab3" data-toggle="tab">Phòng <?php
+							<li><a href="kpis_phong.php">Phòng <?php
 							$manv = $_SESSION["manv"];
 							$name=mysql_query("select * from nhanvien inner join phongban on nhanvien.pb = phongban.id_pb where manv = '$manv'");
 							while($rown = mysql_fetch_array($name)){
@@ -69,7 +71,7 @@ require"lib/quanli.php";
 							<div class="tab-pane fade in active" id="tab2">
 							<ul class="nav nav-pills">
 								<li class="active"><a href="#pilltab1" data-toggle="tab"> Đăng ký KPIs</a></li>
-								<li><a href="dangkydoanhthu.php">Đăng ký Doanh Thu</a></li>
+								<li><a href="dangkydoanhthu.php">Đăng ký Khách hàng</a></li>
 								<?php
 								if(($_SESSION['level'])==2){
 									echo '<li><a href="kiemduyetkpi.php">Phê Duyệt KPIs </a></li>';
@@ -97,7 +99,7 @@ require"lib/quanli.php";
 						while($rown = mysql_fetch_array($name)){?>
    						 <option value="<?php echo $_SESSION["id_nv"]; ?>"><?php echo $rown['ten']; ?></option>
 					<?php }
-				}elseif((($_SESSION["level"]) >= 2)&($pb = 3)){
+				}elseif(($_SESSION["level"]) >= 2){
 				$name=mysql_query("select * from nhanvien where pb = '$pb'");
 						while($rown = mysql_fetch_array($name)){?>
    						 <option value="<?php echo $rown['id_nv']; ?>"><?php echo $rown['ten']; ?></option>
@@ -182,13 +184,13 @@ require"lib/quanli.php";
 			        			<td>{hdct}</td>
 			        			<td>{kq}</td>
 			        			<td>{ghichu}</td>
-			        			<td><input disabled="disabled" type="checkbox" <?php 
+			        			<td><input disabled type="checkbox" <?php 
 			         if(($row_xemkqkpi["pt"])==1){echo ' checked="checked"';}
 			        			 ?> /></td>
-			        			<td><input disabled="disabled" type="checkbox"<?php 
+			        			<td><input disabled type="checkbox"<?php 
 			         if(($row_xemkqkpi["tl"])==1){echo ' checked="checked"';}
 			        			 ?> /></td>
-			        			<td><input disabled="disabled" type="checkbox"<?php 
+			        			<td><input disabled type="checkbox"<?php 
 			         if(($row_xemkqkpi["tgd"])==1){echo ' checked="checked"';}
 			        			 ?> /></td>
 			        			<td width="85px">
@@ -346,9 +348,9 @@ require"lib/quanli.php";
                             <?php
                             $pb = $_SESSION['pb'];
                             $nhom = $_SESSION['id_nh'];
-                            $name=mysql_query("SELECT id_kpi, makpi from kpi where id_pb = '$pb' and id_nh = '$nhom' ");
+                            $name=mysql_query("SELECT * from kpi where id_pb = '$pb' and id_nh = '$nhom' ");
 							while($rown = mysql_fetch_array($name)){?>
-	   						 <option value="<?php echo $rown['id_kpi']; ?>"><?php echo $rown['makpi']; ?></option>
+	   						<option value="<?php echo $rown['id_kpi']; ?>"><?php echo $rown['makpi']; ?> - <?php echo $rown['tenkpi']; ?></option>
 						<?php }   
                             ?>
                           </select>  

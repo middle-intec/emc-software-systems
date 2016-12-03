@@ -55,8 +55,6 @@ require"../lib/quanli.php";
 						  		<th>BC</th>
 						  		<th>TS</th>
 						  		<th>MT</th>
-						  		<th>Phòng Ban</th>
-						  		<th>Nhóm</th>
 						  		<th>TS_P</th>
 						  		<th>MT_P</th>
 						  		<th>TS_CT</th>
@@ -85,8 +83,6 @@ require"../lib/quanli.php";
 						  		<td>{bc}</td>
 						  		<td>{ts}%</td>
 			        			<td>{mt}</td>
-			        			<td>{pb}</td>
-						  		<td>{nh}</td>
 						  		<td>{ts_p}%</td>
 						  		<td>{mt_p}</td>
 						  		<td>{ts_ct}%</td>
@@ -111,8 +107,6 @@ require"../lib/quanli.php";
 				$s = str_replace("{bc}", $row_xemkpi["bc"], $s);
 				$s = str_replace("{ts}", $row_xemkpi["trongso"], $s);
 				$s = str_replace("{mt}", $row_xemkpi["mt"], $s);
-				$s = str_replace("{pb}", $row_xemkpi["phongban"], $s);
-				$s = str_replace("{nh}", $row_xemkpi["tennhom"], $s);
 				$s = str_replace("{ts_p}", $row_xemkpi["trongso_p"], $s);
 				$s = str_replace("{ts_ct}", $row_xemkpi["trongso_ct"], $s);
 				$s = str_replace("{mt_p}", $row_xemkpi["mt_p"], $s);
@@ -169,7 +163,7 @@ require"../lib/quanli.php";
                             <?php
                             $name=mysql_query("SELECT * from kfs");
 							while($rown = mysql_fetch_array($name)){?>
-	   						 <option value="<?php echo $rown['makfs']; ?>"><?php echo $rown['tenkfs']; ?></option>
+	   						 <option value="<?php echo $rown['makfs']; ?>"><?php echo $rown['makfs']; ?> - <?php echo $rown['tenkfs']; ?></option>
 						<?php }   
                             ?>
                           </select>  
@@ -220,7 +214,7 @@ require"../lib/quanli.php";
                             <?php
                             $name=mysql_query("SELECT * from nhanvien");
 							while($rown = mysql_fetch_array($name)){?>
-	   						 <option value="<?php echo $rown['manv']; ?>"><?php echo $rown['ten']; ?></option>
+	   						 <option value="<?php echo $rown['id_nv']; ?>"><?php echo $rown['ten']; ?></option>
 							<?php }   
                             ?>
                           </select>

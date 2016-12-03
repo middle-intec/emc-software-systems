@@ -1,5 +1,5 @@
 <?php
-require"./../lib/mConnection.php";
+require"../../lib/mConnection.php";
 require"../lib/quanli.php";
 ?>
 <?php

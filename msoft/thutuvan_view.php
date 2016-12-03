@@ -38,7 +38,7 @@ require"lib/quanli.php";
                      <button type="button" name="btn_boduyet" id="btn_boduyet" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Bỏ duyệt</button>
               </div>
               <div class="table-responsive">
-               <table class="table table-bordered" id="thutuvan_table">
+               <table class="table table-bordered">
 				<thead>
 				<tr class="rowheader">
 					<td><input type="checkbox" id="checkAll"/></td>

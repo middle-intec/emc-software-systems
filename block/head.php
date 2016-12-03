@@ -4,6 +4,7 @@
 <title>Hệ Thống Phần Mềm EMC - EMC Software Systems</title>
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/styles.css" rel="stylesheet">
+<link href="css/datepicker3.css" rel="stylesheet">
 <link rel="icon" href="favicon.ico">
 <script src="js/jquery-1.11.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>

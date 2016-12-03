@@ -59,7 +59,7 @@ if(isset($_POST["edit"])){
 						<ul class="nav nav-tabs">
 							<li><a href="#tab1" data-toggle="tab">Công ty </a></li>
 							<li class="active"><a href="#tab2" data-toggle="tab">KPIs của tôi</a></li>
-							<li><a href="#tab3" data-toggle="tab"> Phòng <?php
+							<li><a href="kpis_phong.php"> Phòng <?php
 							$manv = $_SESSION["manv"];
 							$name=mysql_query("select * from nhanvien inner join phongban on nhanvien.pb = phongban.id_pb where manv = '$manv'");
 							while($rown = mysql_fetch_array($name)){
@@ -77,7 +77,7 @@ if(isset($_POST["edit"])){
 							<div class="tab-pane fade in active" id="tab2">
 							<ul class="nav nav-pills">
 								<li class="active"><a href="#pilltab1" data-toggle="tab"> Đăng ký KPIs</a></li>
-								<li><a href="dangkydoanhthu.php">Đăng ký Doanh Thu</a></li>
+								<li><a href="dangkydoanhthu.php">Đăng ký Khách hàng</a></li>
 								<li><a href="#pilltab3" data-toggle="tab">Phê Duyệt KPIs </a></li>
 							</ul>
 		
@@ -95,7 +95,7 @@ if(isset($_POST["edit"])){
 <div class="col-sm-6">
 <div class="form-group">
      <label> KPIs</label>
-     <input type="text" disabled="disabled" value="<?php echo $row['makpi'];?> - <?php echo $row['kpi'];?>" class="form-control">
+     <input type="text" disabled value="<?php echo $row['makpi'];?> - <?php echo $row['kpi'];?>" class="form-control">
 </div>
 <div class="form-group">
       <label> Hành động cải tiến </label>
@@ -119,8 +119,78 @@ if(isset($_POST["edit"])){
 </div></div>
 <div class="col-sm-6">
 <div class="form-group">
+<?php 
+switch ($row['makpi']) {
+	case 1:
+    if(empty($_SESSION['hailong'])){
+    $_SESSION['hailong'] = 0;
+    $kq = $_SESSION['hailong'];
+    }else{
+    $kq = $_SESSION['hailong'];}
+       break;
+    case 2:
+    if(empty($_SESSION['kytiep'])){
+    $_SESSION['kytiep'] = 0;
+    $kq = $_SESSION['kytiep'];
+    }else{
+    $kq = $_SESSION['kytiep'];}
+       break;
+    case 3:
+    if(empty($_SESSION['dt'])){
+    $_SESSION['dt'] = 0;
+    $kq = $_SESSION['dt'];
+    }else{
+    $kq = $_SESSION['dt'];}
+        break;
+    case 5:
+    if(empty($_SESSION['gthdmoi'])){
+    $_SESSION['gthdmoi'] = 0;
+    $kq = $_SESSION['gthdmoi'];
+    }else{
+    $kq = $_SESSION['gthdmoi'];}
+        break;
+    case 7:
+    if(empty($_SESSION['sailoi'])){
+    $_SESSION['sailoi'] = 0;
+    $kq = $_SESSION['sailoi'];
+    }else{
+    $kq = $_SESSION['sailoi'];}
+        break;
+    case 8:
+    if(empty($_SESSION['indct'])){
+    	$_SESSION['indct'] = 0;
+    	$kq = $_SESSION['indct'];
+    }else{
+       $kq = $_SESSION['indct'];}
+        break;
+    case 9:
+    if(empty($_SESSION['thutien'])){
+    	$_SESSION['thutien'] = 0;
+    	$kq = $_SESSION['thutien'];
+    }else{
+       $kq = $_SESSION['thutien'];}
+        break;
+    case 10:
+    if(empty($_SESSION['giaoct'])){
+    	$_SESSION['giaoct'] = 0;
+    	$kq = $_SESSION['giaoct'];
+    }else{
+       $kq = $_SESSION['giaoct'];}
+        break;
+    case 12:
+    if(empty($_SESSION['tuvan'])){
+    	$_SESSION['tuvan'] = 0;
+    	$kq = $_SESSION['tuvan'];
+    }else{
+       $kq = $_SESSION['tuvan'];}
+        break;
+    default:
+       $kq = 0;
+        break;
+}
+?>
      <label> Kết quả </label>
-     <input type="text" name="kq" value="<?php echo $row['kq'];?>" class="form-control">
+     <input type="text" name="kq" value="<?php echo $kq; ?>" class="form-control">
 </div>
 <div class="form-group">
        <label> Kết quả HĐCT</label>

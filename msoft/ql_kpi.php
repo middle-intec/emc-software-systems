@@ -41,7 +41,7 @@ require"../lib/quanli.php";
 				<form action="ql_kpi_view.php" method="GET" class="form-inline">
 				<div class="form-group">
                 <label for="email">KPI Phòng:</label>
-                <select class="form-control" name="pb" >
+                <select class="form-control" name="pb" id="pb">
 				<?php
 				$name=mysql_query("select * from phongban");
 				while($rown = mysql_fetch_array($name)){?>
@@ -51,7 +51,7 @@ require"../lib/quanli.php";
    				</select></div>
    				<div class="form-group">
                 <label for="email">Nhóm:</label>
-                <select class="form-control" name="nhom" >
+                <select class="form-control" name="nhom" id = "nh">
 				<?php
 				$name=mysql_query("select * from nhom");
 				while($rown = mysql_fetch_array($name)){?>
@@ -192,7 +192,7 @@ require"../lib/quanli.php";
                             <?php
                             $name=mysql_query("SELECT * from kfs");
 							while($rown = mysql_fetch_array($name)){?>
-	   						 <option value="<?php echo $rown['makfs']; ?>"><?php echo $rown['makfs']; ?></option>
+	   						 <option value="<?php echo $rown['makfs']; ?>"><?php echo $rown['makfs']; ?> - <?php echo $rown['tenkfs']; ?></option>
 						<?php }   
                             ?>
                           </select>  
@@ -243,7 +243,7 @@ require"../lib/quanli.php";
                             <?php
                             $name=mysql_query("SELECT * from nhanvien");
 							while($rown = mysql_fetch_array($name)){?>
-	   						 <option value="<?php echo $rown['manv']; ?>"><?php echo $rown['ten']; ?></option>
+	   						 <option value="<?php echo $rown['id_nv']; ?>"><?php echo $rown['ten']; ?></option>
 							<?php }   
                             ?>
                           </select>
@@ -322,6 +322,11 @@ require"../lib/quanli.php";
            location.reload();  
       		});
 	$('[data-toggle="tooltip"]').tooltip();   
-	
+	$("#pb").change(function(){
+		var id = $("#pb").val();
+		$.post("../kpi/datanhom.php", {id: id}, function(data){
+			$("#nh").html(data);
+		})
+	});
  });  
  </script> 

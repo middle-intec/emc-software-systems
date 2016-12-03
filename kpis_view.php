@@ -8,21 +8,23 @@ require"lib/quanli.php";
 	header("location: index.php");}
 ?>
 <?php
-	$manv = $_GET['manv'];
-	$result = mysql_query(" SELECT count(id_kqkpi) as total, sum(trongso) as ts from kqkpi where manv = '$manv'");
+	$manv = $_GET['manv'];	
+	$thang = $_GET['thang'];
+	$nam = $_GET['nam'];
+	$result = mysql_query(" SELECT count(id_kqkpi) as total, sum(trongso) as ts from kqkpi where manv = '$manv' and thang = '$thang' and nam = '$nam'");
 	$row = mysql_fetch_assoc($result);
 	$total_kpi = $row['total'];
 	$total_trongso = $row['ts'];
-	$result_ts = mysql_query(" SELECT sum(if(lcv='A',trongso,0)) as ts_a, sum(if(lcv='B',trongso,0)) as ts_b, sum((kq/mt)*trongso) as tylets, sum(if(lcv='A',trongso*(kq/mt),0)) as tylets_a, sum(if(lcv='B',trongso*(kq/mt),0)) as tylets_b, sum(((kq/mt)*trongso)*(pt)) as total_pt, sum(((kq/mt)*trongso)*(tl)) as total_tl, sum(((kq/mt)*trongso)*(tgd)) as total_tgd from kqkpi where manv = '$manv'");
+	$result_ts = mysql_query(" SELECT sum(if(lcv='A',trongso,0)) as ts_a, sum(if(lcv='B',trongso,0)) as ts_b, sum((kq/mt)*trongso) as tylets, sum(if(lcv='A',trongso*(kq/mt),0)) as tylets_a, sum(if(lcv='B',trongso*(kq/mt),0)) as tylets_b, sum(((kq/mt)*trongso)*(pt)) as total_pt, sum(((kq/mt)*trongso)*(tl)) as total_tl, sum(((kq/mt)*trongso)*(tgd)) as total_tgd from kqkpi where manv = '$manv' and thang = '$thang' and nam = '$nam'");
 	$row_ts = mysql_fetch_assoc($result_ts);
-	$total_trongsoA = $row_ts['ts_a'];
-	$total_trongsoB = $row_ts['ts_b'];
-	$total_tlhtkpi = $row_ts['tylets'];
-	$total_tylets_a = $row_ts['tylets_a'];
-	$total_tylets_b = $row_ts['tylets_b'];
-	$total_pt = $row_ts['total_pt'];
-	$total_tl = $row_ts['total_tl'];
-	$total_tgd = $row_ts['total_tgd'];
+	$total_trongsoA = number_format($row_ts['ts_a']);
+	$total_trongsoB = number_format($row_ts['ts_b']);
+	$total_tlhtkpi = number_format($row_ts['tylets'],2);
+	$total_tylets_a = number_format($row_ts['tylets_a'],2);
+	$total_tylets_b = number_format($row_ts['tylets_b'],2);
+	$total_pt = number_format($row_ts['total_pt']);
+	$total_tl = number_format($row_ts['total_tl']);
+	$total_tgd = number_format($row_ts['total_tgd']);
 ?>
 <!DOCTYPE html>
 <html>
@@ -49,7 +51,7 @@ require"lib/quanli.php";
 						<ul class="nav nav-tabs">
 							<li><a href="#tab1" data-toggle="tab"> Công ty</a></li>
 							<li class="active"><a href="#tab2" data-toggle="tab">KPIs của tôi</a></li>
-							<li><a href="#tab3" data-toggle="tab"> Phòng <?php
+							<li><a href="kpis_phong.php"> Phòng <?php
 							$manv = $_SESSION["manv"];
 							$name=mysql_query("select * from nhanvien inner join phongban on nhanvien.pb = phongban.id_pb where manv = '$manv'");
 							while($rown = mysql_fetch_array($name)){
@@ -146,8 +148,23 @@ require"lib/quanli.php";
 								    <span class="caret"></span>
 								  </button>
 								  <ul class="dropdown-menu" role="menu">
-								    <li><a class="btn btn-default btn-xs" href="kpis_edit.php?id_kqkpi={id_kqkpi}">Sửa</a></li>
-								    <li><a class="btn btn-default btn-xs xoakqkpi" data-id="{id_kqkpi}">Xóa</a></li>
+								    <?php
+								  $level = $_SESSION["level"];
+					if((($row_xemkqkpi["pt"])==1)&($level>=2)){
+						echo '<li align="center">
+			  			<span>Hết hạn Sửa hoặc Xóa </span>
+	                	</li>';
+					}elseif((($row_xemkqkpi["tl"])==1)&($level>=3)){
+						echo '<li align="center">
+			  			<span>Hết hạn Sửa hoặc Xóa </span>
+	                	</li>';
+					}else{
+						echo '
+					<li><a class="btn btn-default btn-xs" href="kpis_edit.php?id_kqkpi={id_kqkpi}">Sửa</a></li>
+					<li><a class="btn btn-default btn-xs xoakqkpi" data-id="{id_kqkpi}">Xóa</a></li>
+						';
+					}
+								  ?>
 								  </ul>
 								</div>			
 			                	</td>
